@@ -1,4 +1,8 @@
 Revision history for Perl extension Data::Session.
 
+1.01  Wed Dec  1 16:35:00 2010
+	- In t/basic.t, use Module::Load to load BerkeleyDB and Cache::Memcache conditionally, and exit cleanly
+		if they are not installed.
+
 1.00  Tue Nov 30 14:08:00 2010
-	  - Original version.
+	- Original version.

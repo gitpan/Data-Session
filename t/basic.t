@@ -8,13 +8,11 @@ use warnings 'uninitialized';
 
 use lib 't';
 
-use BerkeleyDB;
-
-use Cache::Memcached;
-
 use DBI;
 
 use File::Temp;
+
+use Module::Load (); # For load().
 
 use Test;
 
@@ -33,28 +31,38 @@ sub BEGIN { use_ok('Data::Session'); }
 sub prepare_berkeleydb
 {
 	my($self, $config) = @_;
-	my($env) = BerkeleyDB::Env -> new
-	(
-		Home  => File::Spec -> tmpdir,
-		Flags => DB_CREATE | DB_INIT_CDB | DB_INIT_MPOOL,
-	);
 
 	my($cache);
 
-	if ($env)
+	try
 	{
-		$cache = BerkeleyDB::Hash -> new
-		(
-			Env      => $env,
-			Filename => 'data.session.id.bdb',
-			Flags    => DB_CREATE,
-		);
-	}
+		Module::Load::load('BerkeleyDB');
 
-	if (! $cache)
-	{
-		report("Skipping test. BerkeleyDB error: $BerkeleyDB::Error");
+		my($env) = BerkeleyDB::Env -> new
+		(
+			Home  => File::Spec -> tmpdir,
+			Flags => BerkeleyDB::DB_CREATE() | BerkeleyDB::DB_INIT_CDB() | BerkeleyDB::DB_INIT_MPOOL(),
+		);
+
+		if ($env)
+		{
+			$cache = BerkeleyDB::Hash -> new
+			(
+				Env      => $env,
+				Filename => 'data.session.id.bdb',
+				Flags    => BerkeleyDB::DB_CREATE(),
+			);
+		}
+
+		if (! $cache)
+		{
+			report("Skipping test. BerkeleyDB error: $BerkeleyDB::Error");
+		}
 	}
+	catch
+	{
+		report('Skipping test. Cannot load BerkeleyDB');
+	};
 
 	return $cache;
 
@@ -66,23 +74,34 @@ sub prepare_memcached
 {
 	my($self, $config) = @_;
 
-	# Do a simple check to see if memcached is running.
-
-	my($cache) = Cache::Memcached -> new({namespace => 'data.session.id', servers => ['127.0.0.1:11211']});
-	my($test)  = $cache -> set(time => time);
-
-	if ($test && ($test == 1) )
+	my($cache);
+	
+	try
 	{
-		# It's running, so clean up the test.
+		Module::Load::load('Cache::Memcached');
 
-		$cache -> delete(time);
+		# Do a simple check to see if memcached is running.
+
+		$cache    = Cache::Memcached -> new({namespace => 'data.session.id', servers => ['127.0.0.1:11211']});
+		my($test) = $cache -> set(time => time);
+
+		if ($test && ($test == 1) )
+		{
+			# It's running, so clean up the test.
+
+			$cache -> delete(time);
+		}
+		else
+		{
+			$cache = undef;
+
+			report('Skipping test. memcached is not responding');
+		}
 	}
-	else
+	catch
 	{
-		$cache = undef;
-
-		report('Skipping test because memcached is not responding');
-	}
+		report('Skipping test. Cannot load Cache::Memcache');
+	};
 
 	return $cache;
 
@@ -180,7 +199,7 @@ sub run
 
 		done_testing($$test_count);
 		BAIL_OUT($_);
-	}
+	};
 
 } # End of run.
 

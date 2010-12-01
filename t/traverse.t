@@ -67,7 +67,7 @@ sub run
 
 		done_testing($$test_count);
 		BAIL_OUT($_);
-	}
+	};
 
 } # End of run.
 
