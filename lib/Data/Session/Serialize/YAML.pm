@@ -7,7 +7,7 @@ use warnings 'uninitialized';
 
 use YAML::Tiny ();
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # -----------------------------------------------
 

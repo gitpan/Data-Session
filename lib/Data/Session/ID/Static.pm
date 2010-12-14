@@ -12,7 +12,7 @@ use Hash::FieldHash ':all';
 
 fieldhash my %id => 'id';
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # -----------------------------------------------
 

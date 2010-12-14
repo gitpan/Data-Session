@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # -----------------------------------------------
 
@@ -96,9 +96,9 @@ sub clear
 
 sub cookie
 {
-	my($self)   = @_;
+	my($self)   = shift;
 	my($q)      = $self -> query;
-	my(@param)  = ('-name' => $self -> name, '-value' => $self -> id);
+	my(@param)  = ('-name' => $self -> name, '-value' => $self -> id, @_);
 	my($cookie) = '';
 
 	if (! $q -> can('cookie') )
@@ -339,7 +339,7 @@ sub get_my_serializers
 
 sub http_header
 {
-	my($self)   = shift @_;
+	my($self)   = shift;
 	my($cookie) = $self -> cookie;
 
 	my($header);
@@ -993,11 +993,13 @@ and L<CGI::Session>.
 
 L<Data::Session> stores user data internally in a hashref, and the module reserves key names starting with '_'.
 
-The current list of reserved keys is documented undef L</Method: flush()>.
+The current list of reserved keys is documented undef L</flush()>.
 
 Of course, the module also has a whole set of methods to help manage state.
 
-=head1 Method: new()
+=head1 Methods
+
+=head2 new()
 
 Calling new() returns a object of type L<Data::Session>, or - if new() fails - it returns undef.
 For details see L</Trouble with Errors>.
@@ -1106,7 +1108,7 @@ This key is optional.
 
 The default value is 0.
 
-Note: If you do not provide an id here, the module calls L</Method: user_id()> to determine whether or not
+Note: If you do not provide an id here, the module calls L</user_id()> to determine whether or not
 an id is available from a cookie or a form field.
 
 This complex topic is discussed in the section L<Specifying an Id>.
@@ -1158,7 +1160,7 @@ This key is optional.
 
 The default value is 'CGISESSID'.
 
-Usage of 'name' is discussed in the sections L</Specifying an Id> and L</Method: user_id()>.
+Usage of 'name' is discussed in the sections L</Specifying an Id> and L</user_id()>.
 
 =item o no_flock => $boolean
 
@@ -1240,7 +1242,7 @@ Specifies the query object.
 
 If not specified, the next option - 'query_class' - will be used to create a query object.
 
-Either way, the object will be accessible via the $session -> query method.
+Either way, the object will be accessible via the $session -> query() method.
 
 This key is optional.
 
@@ -1315,11 +1317,11 @@ This key is optional.
 
 The default, 0, means nothing is printed.
 
-See L</Method: dump([$heading])> for what happens when verbose is 2.
+See L</dump([$heading])> for what happens when verbose is 2.
 
 =back
 
-=head2 Specifying Session Options
+=head3 Specifying Session Options
 
 See also L</Case-sensitive Options>.
 
@@ -1541,7 +1543,7 @@ See L<Data::Session::Serialize::YAML>.
 
 =back
 
-=head2 Case-sensitive Options
+=head3 Case-sensitive Options
 
 Just to emphasize: The names of drivers, etc follow the DBD::* (or similar) style of case-sensitivity.
 
@@ -1617,9 +1619,9 @@ Serializers:
 
 =back
 
-=head2 Specifying an Id
+=head3 Specifying an Id
 
-L</Method: user_id()> is called to determine if an id is available from a cookie or a form field.
+L</user_id()> is called to determine if an id is available from a cookie or a form field.
 
 There are several cases to consider:
 
@@ -1658,7 +1660,7 @@ So, how to tell the difference between the last 2 cases? Like this:
 		# New session with new id.
 	}
 
-=head2 Combinations of Options
+=head3 Combinations of Options
 
 See also L</Specifying Session Options>, for options-related combinations.
 
@@ -1690,15 +1692,20 @@ in the sessions table, since the type 'text' does not handle null (\x00) charact
 
 =back
 
-=head1 Method: atime()
+=head2 atime([$atime])
+
+The [] indicates an optional parameter.
 
 Returns the last access time of the session.
 
-The value comes from calling Perl's time() function.
+By default, the value comes from calling Perl's time() function, or you may pass in a time,
+which is then used to set the last access time of the session.
 
-See also L</Method: ctime()>, L</Method: etime()> and L</Method: ptime()>.
+This latter alternative is used by L</load_session()>.
 
-=head1 Method: check_expiry()
+See also L</ctime()>, L</etime()> and L</ptime()>.
+
+=head2 check_expiry()
 
 Checks that there is an expiry time set for the session, and, if (atime + etime) < time():
 
@@ -1706,17 +1713,17 @@ Checks that there is an expiry time set for the session, and, if (atime + etime)
 
 =item o Deletes the session
 
-See L</Method: delete()> for precisely what this means.
+See L</delete()> for precisely what this means.
 
 =item o Sets the expired flag
 
-See L</Method: expired()>.
+See L</expired()>.
 
 =back
 
-This is used when the session is loaded, when you call http_header(), and by scripts/expire.pl.
+This is used when the session is loaded, when you call L</http_header([@arg])>, and by scripts/expire.pl.
 
-=head1 Method: clear([$name])
+=head2 clear([$name])
 
 The [] indicates an optional parameter.
 
@@ -1728,15 +1735,31 @@ $name is a parameter name or an arrayref of parameter names.
 
 If $name is not specified, it is set to the list of all unreserved keys (parameter names) in the session.
 
-See L</Method: param([@arg])> for details.
+See L</param([@arg])> for details.
 
-=head1 Method: cookie()
+=head2 cookie([@arg])
+
+The [] indicates an optional parameter.
 
 Returns a cookie, or '' (the empty string) if the query object does not have a cookie() method.
 
-See L</Method: http_header> and scripts/cookie.pl.
+Use the @arg parameter to pass any extra parameters to the query object's cookie() method.
 
-=head1 Method: ctime()
+Warning: Parameters which are handled by L<Data::Session>, and hence should I<not> be passed in, are:
+
+=over 4
+
+=item o -expires
+
+=item o -name
+
+=item o -value
+
+=back
+
+See L</http_header([@arg])> and scripts/cookie.pl.
+
+=head2 ctime()
 
 Returns the creation time of the session.
 
@@ -1744,9 +1767,9 @@ The value comes from calling Perl's time() function when the session was created
 
 This is not the creation time of the session I<object>, except for new sessions.
 
-See also L</Method: atime()>, L</Method: etime()> and L</Method: ptime()>.
+See also L</atime()>, L</etime()> and L</ptime()>.
 
-=head1 Method: delete()
+=head2 delete()
 
 Returns the result of calling the driver's remove() method.
 
@@ -1771,15 +1794,15 @@ Likewise, if you call flush(), the call will be ignored.
 
 Nevertheless, the session object is still fully functional - it just can't be saved or retrieved.
 
-See also L</Method: deleted()> and L</Method: expire([@arg])>.
+See also L</deleted()> and L</expire([@arg])>.
 
-=head1 Method: deleted()
+=head2 deleted()
 
 Returns a Boolean (0/1) indicating whether or not the session has been deleted.
 
-See also L</Method: delete()> and L</Method: expire([@arg])>.
+See also L</delete()> and L</expire([@arg])>.
 
-=head1 Method: dump([$heading])
+=head2 dump([$heading])
 
 The [] indicates an optional parameter.
 
@@ -1803,15 +1826,15 @@ When verbose is 2, dump is called at these times:
 
 =back
 
-=head1 Method: etime()
+=head2 etime()
 
 Returns the expiry time of the session.
 
 This is the same as calling $session -> expiry(). In fact, this just calls $session -> etime.
 
-See also L</Method: atime()>, L</Method: ctime()> and L</Method: ptime()>.
+See also L</atime()>, L</ctime()> and L</ptime()>.
 
-=head1 Method: expire([@arg])
+=head2 expire([@arg])
 
 The [] indicates an optional parameter.
 
@@ -1826,11 +1849,11 @@ In all cases, a time of 0 disables expiry.
 
 This affects users of L<Cache::Memcached>. See below and L<Data::Session::Driver::Memcached>.
 
-When a session expires, it is deleted from storage. See L</Method: delete()> for details.
+When a session expires, it is deleted from storage. See L</delete()> for details.
 
 The test for whether or not a session has expired only takes place when a session is loaded from storage.
 
-When a session parameter expires, it is deleted from the session object. See L</Method: clear([$name])>
+When a session parameter expires, it is deleted from the session object. See L</clear([$name])>
 for details.
 
 The test for whether or not a session parameter has expired only takes place when a session is loaded from storage.
@@ -1865,7 +1888,7 @@ Use these suffixes to change the interpretation of the integer you specify:
 Hence $session -> expire('2h') means expire the session in 2 hours.
 
 expire($time) calls validate_time($time) to perform the conversion from '2h' to seconds,
-so L</Method: validate_time($time)> is available to you too.
+so L</validate_time($time)> is available to you too.
 
 If setting a time like this, expire($time) returns 1.
 
@@ -1889,16 +1912,16 @@ Special cases:
 
 =back
 
-See also L</Method: atime()>, L</Method: ctime()>, L</Method: etime()>, L</Method: delete()> and
-L</Method: deleted()>.
+See also L</atime()>, L</ctime()>, L</etime()>, L</delete()> and
+L</deleted()>.
 
-=head1 Method: expired()
+=head2 expired()
 
 Returns a Boolean (0/1) indicating whether or not the session has expired.
 
-See L</Method: delete()>.
+See L</delete()>.
 
-=head1 Method: flush()
+=head2 flush()
 
 Returns 1.
 
@@ -1929,7 +1952,7 @@ The session's expiry time.
 
 A time of 0 means there is no expiry time.
 
-This affect users of L<Cache::Memcached>. See L</Method: expire([@arg])> and L<Data::Session::Driver::Memcached>.
+This affect users of L<Cache::Memcached>. See L</expire([@arg])> and L<Data::Session::Driver::Memcached>.
 
 =item o _SESSION_ID
 
@@ -1941,7 +1964,7 @@ A hashref of session parameter expiry times.
 
 =back
 
-=head1 Method: http_header([@arg])
+=head2 http_header([@arg])
 
 The [] indicate an optional parameter.
 
@@ -1959,18 +1982,18 @@ $session -> cookie() to generate either a cookie, or '' (the empty string).
 
 The @arg parameter, if any, is passed to the query object's header() method, after the cookie parameter, if any.
 
-=head1 Method: id()
+=head2 id()
 
 Returns the id of the session.
 
-=head1 Method: is_new()
+=head2 is_new()
 
 Returns a Boolean (0/1).
 
 Specifies you want to know if the session object was created from scratch (1) or was retrieved
 from storage (0).
 
-=head1 Method: load_param([$q][, $name])
+=head2 load_param([$q][, $name])
 
 The [] indicate optional parameters.
 
@@ -1978,7 +2001,7 @@ Returns $q.
 
 Loads (copies) all non-reserved parameters from the session object into the query object.
 
-L</Method: save_param()> performs the opposite operation.
+L</save_param([$q][, $name])> performs the opposite operation.
 
 $q is a query object, and $name is a parameter name or an arrayref of names.
 
@@ -1991,13 +2014,13 @@ If $name is specified, only the session parameters named in the arrayref are pro
 
 If $name is not specified, copies all parameters belonging to the query object.
 
-=head1 Method: load_query_class()
+=head2 load_query_class()
 
 Returns the query object.
 
 This calls $session -> query_class -> new if the session object's query object is not defined.
 
-=head1 Method: load_session()
+=head2 load_session()
 
 Returns a session.
 
@@ -2020,7 +2043,7 @@ You can call is_new() to tell the difference between these 2 cases.
 
 =back
 
-=head1 Method: modified()
+=head2 modified()
 
 Returns a Boolean (0/1) indicating whether or not the session's parameters have been modified.
 
@@ -2033,7 +2056,7 @@ has been modified.
 If you wish to stop the session being written to storage, without deleting it, you can reset the
 modified flag with $session -> modified(0).
 
-=head1 Method: param([@arg])
+=head2 param([@arg])
 
 The [] indicates an optional parameter.
 
@@ -2056,19 +2079,19 @@ That call returns a list of the keys you have previously stored in the session.
 
 Use $session -> param('key') to return the value associated with the given key.
 
-See also L</Method: clear([$name])>.
+See also L</clear([$name])>.
 
-=head1 Method: ptime()
+=head2 ptime()
 
 Returns the hashref of session parameter expiry times.
 
 Keys are parameter names and values are expiry times in seconds.
 
-These expiry times are set by calling L</Method: expire([@arg])>.
+These expiry times are set by calling L</expire([@arg])>.
 
-See also L</Method: atime()>, L</Method: ctime()> and L</Method: etime()>.
+See also L</atime()>, L</ctime()> and L</etime()>.
 
-=head1 Method: save_param([$q][, $name])
+=head2 save_param([$q][, $name])
 
 The [] indicate optional parameters.
 
@@ -2076,7 +2099,7 @@ Returns 1.
 
 Loads (copies) all non-reserved parameters from the query object into the session object.
 
-L</Method: load_param()> performs the opposite operation.
+L</load_param([$q][, $name])> performs the opposite operation.
 
 $q is a query object, and $name is a parameter name or an arrayref of names.
 
@@ -2089,7 +2112,7 @@ If $name is specified, only the session parameters named in the arrayref are pro
 
 If $name is not specified, copies all parameters.
 
-=head1 Method: traverse($sub)
+=head2 traverse($sub)
 
 Returns 1.
 
@@ -2100,7 +2123,7 @@ Note: traverse($sub) does not load the sessions, and hence has no effect on the 
 
 See scripts/expire.pl.
 
-=head1 Method: user_id()
+=head2 user_id()
 
 Returns either a session id, or 0.
 
@@ -2127,18 +2150,18 @@ Note: The name of the cookie, and the name of the CGI form field, is passed to n
 
 =back
 
-=head1 Method: validate_options()
+=head2 validate_options()
 
 Cross-check a few things.
 
 E.g. When using type => '... id:Static ...', you must supply a (true) id to new(id => ...').
 
-=head1 Method: validate_time($time)
+=head2 validate_time($time)
 
 Dies for an invalid time string, or returns the number of seconds corresponding to $time,
 which may be positive or negative.
 
-See L</Method: expire([@arg])> for details on the time string format.
+See L</expire([@arg])> for details on the time string format.
 
 =head1 Test Code
 

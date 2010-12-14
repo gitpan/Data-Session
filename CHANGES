@@ -1,5 +1,12 @@
 Revision history for Perl extension Data::Session.
 
+1.02  Tue Dec 14 11:16:00 2010
+	- Change handling of parameters passed to cookie(), so that the caller may pass extra parameters to
+		the query object's cookie() method.
+	- Document the $atime parameter to the atime() method.
+	- Change the POD structure, so that all methods are assigned a level of head2 under a head1 of Methods.
+	- Various small corrections to the POD.
+
 1.01  Wed Dec  1 16:35:00 2010
 	- In t/basic.t, use Module::Load to load BerkeleyDB and Cache::Memcache conditionally, and exit cleanly
 		if they are not installed.
