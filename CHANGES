@@ -1,5 +1,10 @@
 Revision history for Perl extension Data::Session.
 
+1.03  Fri Dec 24 17:36:00 2010
+	- Add DBD::SQLite to the list of pre-reqs.
+	- Patch POD warning users to avoid Storable due to this bug:
+		http://rt.cpan.org/Public/Bug/Display.html?id=36087
+
 1.02  Tue Dec 14 11:16:00 2010
 	- Change handling of parameters passed to cookie(), so that the caller may pass extra parameters to
 		the query object's cookie() method.

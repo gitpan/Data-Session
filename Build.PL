@@ -18,6 +18,7 @@ Module::Build -> new
 		common::sense            => 3.3,
 		Data::Dumper             => 2.128,
 		Data::UUID               => 1.217,
+		DBD::SQLite              => 1.13,
 		DBI                      => 1.615,
 		Digest::MD5              => 2.51,
 		Digest::SHA              => 5.48,

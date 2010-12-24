@@ -10,7 +10,7 @@ use Digest::SHA;
 use Hash::FieldHash ':all';
 
 our $errstr  = '';
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # -----------------------------------------------
 

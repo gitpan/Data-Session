@@ -7,7 +7,7 @@ use warnings 'uninitialized';
 
 use Storable;
 
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # -----------------------------------------------
 
@@ -52,6 +52,8 @@ L<Data::Session::Serialize::Storable> - A persistent session manager
 =head1 Synopsis
 
 See L<Data::Session> for details.
+
+Warning: Storable should be avoided until this problem is fixed: http://rt.cpan.org/Public/Bug/Display.html?id=36087
 
 =head1 Description
 

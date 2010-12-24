@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # -----------------------------------------------
 
@@ -1533,6 +1533,8 @@ Use L<Storable> to freeze/thaw sessions.
 
 See L<Data::Session::Serialize::Storable>.
 
+Warning: Storable should be avoided until this problem is fixed: http://rt.cpan.org/Public/Bug/Display.html?id=36087
+
 =item o YAML
 
 Use L<YAML::Tiny> to freeze/thaw sessions.
@@ -1614,6 +1616,8 @@ Serializers:
 =item o L<Data::Session::Serialize::JSON>
 
 =item o L<Data::Session::Serialize::Storable>
+
+Warning: Storable should be avoided until this problem is fixed: http://rt.cpan.org/Public/Bug/Display.html?id=36087
 
 =item o L<Data::Session::Serialize::YAML>
 

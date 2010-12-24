@@ -7,7 +7,7 @@ use warnings 'uninitialized';
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # -----------------------------------------------
 
