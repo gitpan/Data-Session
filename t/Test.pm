@@ -1,14 +1,14 @@
 package Test;
 
 no autovivification;
-
-use common::sense;
-
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use CGI;
 
 #use Data::Session; # The caller did use_ok on Data::Session.
+
+use DBI;
 
 use DBIx::Admin::CreateTable;
 
@@ -40,7 +40,7 @@ fieldhash my %value       => 'value';
 fieldhash my %verbose     => 'verbose';
 
 our $errstr  = '';
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

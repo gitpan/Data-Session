@@ -1,23 +1,20 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 no autovivification;
-
-use common::sense;
-
-use warnings 'uninitialized';
-
 use lib 't';
+use strict;
+use warnings;
 
 use DBI;
 
+use DBIx::Admin::DSNManager;
+
+use File::Spec;
 use File::Temp;
 
 use Module::Load (); # For load().
 
 use Test;
-
-use DBIx::Admin::DSNManager;
-
 use Test::More;
 
 use Try::Tiny;
@@ -56,6 +53,9 @@ sub prepare_berkeleydb
 
 		if (! $cache)
 		{
+			# Avoid used-once warning.
+			$BerkeleyDB::Error ||= $BerkeleyDB::Error;
+
 			report("Skipping test. BerkeleyDB error: $BerkeleyDB::Error");
 		}
 	}

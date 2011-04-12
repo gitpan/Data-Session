@@ -1,8 +1,8 @@
 package Data::Session::Base;
 
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use Hash::FieldHash ':all';
 
@@ -47,7 +47,7 @@ fieldhash my %username          => 'username';
 fieldhash my %verbose           => 'verbose';
 
 our $errstr  = '';
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

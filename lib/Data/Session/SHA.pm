@@ -2,15 +2,15 @@ package Data::Session::SHA;
 
 use parent 'Data::Session::Base';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use Digest::SHA;
 
 use Hash::FieldHash ':all';
 
 our $errstr  = '';
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

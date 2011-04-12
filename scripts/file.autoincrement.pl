@@ -1,16 +1,19 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
-use common::sense;
+use strict;
+use warnings;
 
 use Data::Session;
 
+use File::Spec;
 use File::Temp;
 
 # -----------------------------------------------
 
 # The EXLOCK is for BSD-based systems.
 
-my($data_source) = 'dbi:SQLite:dbname=/tmp/sessions.sqlite';
+my($directory)   = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
+my($data_source) = 'dbi:SQLite:dbname=' . File::Spec -> catdir($directory, 'sessions.sqlite');
 my($file_name)   = File::Temp -> new(EXLOCK => 0);
 my($type)        = 'driver:File;id:AutoIncrement;serialize:DataDumper'; # Case-sensitive.
 

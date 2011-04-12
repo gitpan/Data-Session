@@ -2,8 +2,8 @@ package Data::Session::ID;
 
 use parent 'Data::Session::Base';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use File::Spec;
 
@@ -12,7 +12,7 @@ use Hash::FieldHash ':all';
 fieldhash my %id_length => 'id_length';
 
 our $errstr  = '';
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

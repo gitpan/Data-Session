@@ -2,8 +2,8 @@ package Data::Session::Driver;
 
 use parent 'Data::Session::Base';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use DBI;
 
@@ -12,7 +12,7 @@ use Hash::FieldHash ':all';
 fieldhash my %created_dbh => 'created_dbh';
 
 our $errstr  = '';
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

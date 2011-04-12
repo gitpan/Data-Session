@@ -2,12 +2,12 @@ package Data::Session::Serialize::FreezeThaw;
 
 use parent 'Data::Session::Base';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use FreezeThaw;
 
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

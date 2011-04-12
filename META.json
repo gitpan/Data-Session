@@ -1,0 +1,184 @@
+{
+   "abstract" : "Persistent session data management",
+   "author" : [
+      "Ron Savage <ron@savage.net.au>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110580",
+   "license" : [
+      "artistic_1"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Data-Session",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::More" : "0.96",
+            "Test::Pod" : "1.44"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.38"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "CGI" : "3.5",
+            "DBD::SQLite" : "1.13",
+            "DBI" : "1.615",
+            "DBIx::Admin::CreateTable" : "2.07",
+            "DBIx::Admin::DSNManager" : "1",
+            "Data::Dumper" : "2.128",
+            "Data::UUID" : "1.217",
+            "Digest::MD5" : "2.51",
+            "Digest::SHA" : "5.48",
+            "Fcntl" : "1.06",
+            "File::Path" : "2.08",
+            "File::Slurp" : "9999.13",
+            "File::Spec" : "3.33",
+            "File::Temp" : "0.22",
+            "FreezeThaw" : "0.5001",
+            "Hash::FieldHash" : "0.1",
+            "JSON" : "2.27",
+            "Module::Load" : "0.18",
+            "Safe" : "2.29",
+            "Scalar::Util" : "1.23",
+            "Storable" : "2.24",
+            "Try::Tiny" : "0.07",
+            "YAML::Tiny" : "1.44",
+            "autovivification" : "0.06",
+            "parent" : "0.224",
+            "vars" : "1.01"
+         }
+      }
+   },
+   "provides" : {
+      "Data::Session" : {
+         "file" : "lib/Data/Session.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Base" : {
+         "file" : "lib/Data/Session/Base.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::CGISession" : {
+         "file" : "lib/Data/Session/CGISession.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver" : {
+         "file" : "lib/Data/Session/Driver.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::BerkeleyDB" : {
+         "file" : "lib/Data/Session/Driver/BerkeleyDB.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::File" : {
+         "file" : "lib/Data/Session/Driver/File.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::Memcached" : {
+         "file" : "lib/Data/Session/Driver/Memcached.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::ODBC" : {
+         "file" : "lib/Data/Session/Driver/ODBC.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::Oracle" : {
+         "file" : "lib/Data/Session/Driver/Oracle.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::Pg" : {
+         "file" : "lib/Data/Session/Driver/Pg.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::SQLite" : {
+         "file" : "lib/Data/Session/Driver/SQLite.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Driver::mysql" : {
+         "file" : "lib/Data/Session/Driver/mysql.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID" : {
+         "file" : "lib/Data/Session/ID.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::AutoIncrement" : {
+         "file" : "lib/Data/Session/ID/AutoIncrement.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::MD5" : {
+         "file" : "lib/Data/Session/ID/MD5.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::SHA1" : {
+         "file" : "lib/Data/Session/ID/SHA1.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::SHA256" : {
+         "file" : "lib/Data/Session/ID/SHA256.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::SHA512" : {
+         "file" : "lib/Data/Session/ID/SHA512.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::Static" : {
+         "file" : "lib/Data/Session/ID/Static.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::UUID16" : {
+         "file" : "lib/Data/Session/ID/UUID16.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::UUID34" : {
+         "file" : "lib/Data/Session/ID/UUID34.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::UUID36" : {
+         "file" : "lib/Data/Session/ID/UUID36.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::ID::UUID64" : {
+         "file" : "lib/Data/Session/ID/UUID64.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::SHA" : {
+         "file" : "lib/Data/Session/SHA.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Serialize::DataDumper" : {
+         "file" : "lib/Data/Session/Serialize/DataDumper.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Serialize::FreezeThaw" : {
+         "file" : "lib/Data/Session/Serialize/FreezeThaw.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Serialize::JSON" : {
+         "file" : "lib/Data/Session/Serialize/JSON.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Serialize::Storable" : {
+         "file" : "lib/Data/Session/Serialize/Storable.pm",
+         "version" : "1.05"
+      },
+      "Data::Session::Serialize::YAML" : {
+         "file" : "lib/Data/Session/Serialize/YAML.pm",
+         "version" : "1.05"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://opensource.org/licenses/artistic-license.php"
+      ]
+   },
+   "version" : "1.05"
+}

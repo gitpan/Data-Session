@@ -2,12 +2,12 @@ package Data::Session::Driver::mysql;
 
 use parent 'Data::Session::Driver';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

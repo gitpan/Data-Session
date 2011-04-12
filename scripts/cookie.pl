@@ -1,14 +1,21 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
-use common::sense;
+use strict;
+use warnings;
 
 use CGI;
 
 use Data::Session;
 
+use File::Spec;
+use File::Temp;
+
 # -------------------
 
-my($data_source) = 'dbi:SQLite:dbname=/tmp/sessions.sqlite';
+# The EXLOCK is for BSD-based systems.
+
+my($directory)   = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
+my($data_source) = 'dbi:SQLite:dbname=' . File::Spec -> catdir($directory, 'sessions.sqlite');
 my($session)     = Data::Session -> new(data_source => $data_source) || die $Data::Session::errstr;
 
 $session -> expire(10);

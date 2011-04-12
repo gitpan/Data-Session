@@ -1,18 +1,15 @@
 package Data::Session::ID::Static;
 
 use parent 'Data::Session::ID';
-
 no autovivification;
-
-use common::sense;
-
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use Hash::FieldHash ':all';
 
 fieldhash my %id => 'id';
 
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

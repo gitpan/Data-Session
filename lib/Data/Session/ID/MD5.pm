@@ -2,15 +2,15 @@ package Data::Session::ID::MD5;
 
 use parent 'Data::Session::ID';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use Digest::MD5;
 
 use Hash::FieldHash ':all';
 
 our $errstr  = '';
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

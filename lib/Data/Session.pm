@@ -2,8 +2,8 @@ package Data::Session;
 
 use parent 'Data::Session::Base';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use File::Spec;  # For catdir.
 use File::Slurp; # For read_dir.
@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 
@@ -908,7 +908,9 @@ L<Data::Session> - A persistent session manager
 
 A basic session. See scripts/sqlite.pl:
 
-	my($data_source) = 'dbi:SQLite:dbname=/tmp/sessions.sqlite';
+	# The EXLOCK is for BSD-based systems.
+	my($directory)   = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
+	my($data_source) = 'dbi:SQLite:dbname=' . File::Spec -> catdir($directory, 'sessions.sqlite');
 	my($type)        = 'driver:SQLite;id:SHA1;serialize:DataDumper'; # Case-sensitive.
 	my($session)     = Data::Session -> new
 	(
@@ -967,7 +969,8 @@ Using memcached as a cache manager. See scripts/memcached.pl:
 Using a file to hold the ids. See scripts/file.autoincrement.pl:
 
 	# The EXLOCK is for BSD-based systems.
-	my($data_source) = 'dbi:SQLite:dbname=/tmp/sessions.sqlite';
+	my($directory)   = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
+	my($data_source) = 'dbi:SQLite:dbname=' . File::Spec -> catdir($directory, 'sessions.sqlite');
 	my($file_name)   = File::Temp -> new(EXLOCK => 0);
 	my($type)        = 'driver:File;id:AutoIncrement;serialize:DataDumper'; # Case-sensitive.
 	my($session)     = Data::Session -> new

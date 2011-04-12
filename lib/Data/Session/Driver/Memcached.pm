@@ -2,14 +2,14 @@ package Data::Session::Driver::Memcached;
 
 use parent 'Data::Session::Base';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use Hash::FieldHash ':all';
 
 use Try::Tiny;
 
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

@@ -2,8 +2,8 @@ package Data::Session::Driver::Pg;
 
 use parent 'Data::Session::Driver';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use DBD::Pg qw(PG_BYTEA PG_TEXT);
 
@@ -11,7 +11,7 @@ use Hash::FieldHash ':all';
 
 use Try::Tiny;
 
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

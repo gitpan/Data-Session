@@ -2,8 +2,8 @@ package Data::Session::Serialize::DataDumper;
 
 use parent 'Data::Session::Base';
 no autovivification;
-use common::sense;
-use warnings 'uninitialized';
+use strict;
+use warnings;
 
 use Data::Dumper;
 
@@ -15,7 +15,7 @@ use vars qw( %overloaded );
 
 require overload;
 
-our $VERSION = '1.03';
+our $VERSION = '1.05';
 
 # -----------------------------------------------
 

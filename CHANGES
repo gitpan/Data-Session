@@ -1,5 +1,17 @@
 Revision history for Perl extension Data::Session.
 
+1.05  Tue Apr 12 13:11:00 2011
+	- Eliminate references to /tmp by using File::Temp::newdir. This applies to docs and various scripts/*.pl.
+	- Patch t/Test.pm to use DBI.
+	- Patch t/basic.t to avoid a used once error on $BerkeleyDB::Error.
+	- Add configure_requires => { 'Module::Build' => 0.38 } to Build.PL.
+	- Reformat Build.PL and Makefile.PL now that we've reverted from Padre to Emacs (due to install issues).
+	- Add META.json to files tracked by git.
+
+1.04  Wed Feb 16 11:55:00 2011
+	- Replace /usr/bin/perl with /usr/bin/env perl.
+	- Replace common::sense with use strict and use warnings, to get uninit var warnings.
+
 1.03  Fri Dec 24 17:36:00 2010
 	- Add DBD::SQLite to the list of pre-reqs.
 	- Patch POD warning users to avoid Storable due to this bug:
