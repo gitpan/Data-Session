@@ -9,7 +9,7 @@ use Hash::FieldHash ':all';
 
 fieldhash my %id => 'id';
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 # -----------------------------------------------
 

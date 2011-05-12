@@ -1,5 +1,10 @@
 Revision history for Perl extension Data::Session.
 
+1.06  Thu May 12 12:01:00 2011
+	  - No code changes.
+	  - Patch the tests to parse the DSN more closely, to skip tests if the SQLite directory /tmp does not exist.
+	  	This directory is present in t/basic.ini and t/bulk.ini.
+
 1.05  Tue Apr 12 13:11:00 2011
 	- Eliminate references to /tmp by using File::Temp::newdir. This applies to docs and various scripts/*.pl.
 	- Patch t/Test.pm to use DBI.

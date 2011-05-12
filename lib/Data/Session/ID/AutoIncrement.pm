@@ -9,7 +9,7 @@ use Fcntl qw/:DEFAULT :flock/;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 # -----------------------------------------------
 

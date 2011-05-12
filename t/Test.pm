@@ -40,7 +40,26 @@ fieldhash my %value       => 'value';
 fieldhash my %verbose     => 'verbose';
 
 our $errstr  = '';
-our $VERSION = '1.05';
+our $VERSION = '1.06';
+
+# -----------------------------------------------
+
+sub check_sqlite_directory_exists
+{
+	my($self)   = @_;
+	my(@dsn)    = DBI -> parse_dsn($self -> dsn);
+	my($result) = 1; # Success.
+
+	if ($dsn[4] && ($dsn[1] =~ /^SQLite/i) )
+	{
+		my($dummy, $dir_name) = split(/=/, $dsn[4]);
+		$dir_name             =~ s|^(.*)/.*$|$1|;
+		$result               = 0 if (! -e $dir_name);
+	}
+
+	return $result;
+
+} # End of check_sqlite_directory_exists.
 
 # -----------------------------------------------
 

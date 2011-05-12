@@ -88,6 +88,7 @@ my($dsn_config) = DBIx::Admin::DSNManager -> new(file_name => 't/basic.ini') -> 
 my($test_count) = 1; # The use_ok in BEGIN counts as the first test.
 
 my($config);
+my($temp);
 
 # We skip UUID16 since echoing such ids to the console can change the char set.
 
@@ -100,6 +101,15 @@ for my $id (qw/MD5/)
 			$config = $$dsn_config{$dsn_name};
 
 			next if ( ($$config{active} == 0) || ($$config{use_for_testing} == 0) );
+
+			$temp = Test -> new(dsn => $$config{dsn}, type => 'Fake');
+
+			if ($temp -> check_sqlite_directory_exists == 0)
+			{
+				report("Skipping dsn '$$config{dsn}' because the SQLite directory does not exist");
+
+				next;
+			}
 
 			report("DSN name: $dsn_name. DSN: $$config{dsn}. ID generator: $id. Serializer: $serializer");
 

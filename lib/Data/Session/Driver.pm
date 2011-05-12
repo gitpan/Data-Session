@@ -12,7 +12,7 @@ use Hash::FieldHash ':all';
 fieldhash my %created_dbh => 'created_dbh';
 
 our $errstr  = '';
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 # -----------------------------------------------
 
