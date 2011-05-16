@@ -6,12 +6,11 @@ use lib 't';
 
 use DBI;
 
+use DBIx::Admin::DSNManager;
+
 use File::Temp;
 
 use Test;
-
-use DBIx::Admin::DSNManager;
-
 use Test::More;
 
 use Try::Tiny;

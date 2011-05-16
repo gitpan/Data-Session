@@ -1,5 +1,9 @@
 Revision history for Perl extension Data::Session.
 
+1.07  Mon May 16  9:23:00 2011
+	  - Remove redundant declaration of id() in Data::Session::ID::Static, which was producing the message:
+	  	field "id" redefined or overridden at ... line 10.
+
 1.06  Thu May 12 12:01:00 2011
 	  - No code changes.
 	  - Patch the tests to parse the DSN more closely, to skip tests if the SQLite directory /tmp does not exist.
