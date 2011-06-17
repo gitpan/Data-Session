@@ -7,7 +7,7 @@ use warnings;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 
 # -----------------------------------------------
 

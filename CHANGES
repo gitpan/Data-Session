@@ -1,5 +1,11 @@
 Revision history for Perl extension Data::Session.
 
+1.09  Fri Jun 17 14:22:00 2011
+	- Revert change in 1.08, which produces errors during global destruction.
+	  This means, to save a session, you must store something in it, to force the session to be modified.
+	- Duplicate, briefly, the explanation of sessions and flushing, as the new first point in the FAQ.
+	- Changes some debug messages (relating to session and parameter expiry) which were ambiguous.
+
 1.08  Fri Jun 17 13:07:00 2011
 	- Ensure new sessions, and not just modified ones, are written during flush().
 

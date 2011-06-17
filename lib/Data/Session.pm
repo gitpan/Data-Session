@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 
 # -----------------------------------------------
 
@@ -259,7 +259,7 @@ sub flush
 {
 	my($self) = @_;
 
-	if ( ($self -> is_new || $self -> modified) && ! $self -> deleted)
+	if ($self -> modified && ! $self -> deleted)
 	{
 		$self -> driver_class -> store
 		(
@@ -269,7 +269,7 @@ sub flush
 		);
 	}
 
-	($self -> verbose > 1) && $self -> dump('Flushing. Modified: ' . $self -> modified . '. Deleted: ' . $self -> deleted);
+	($self -> verbose > 1) && $self -> dump('Flushing. New: ' . $self -> is_new . '. Modified: ' . $self -> modified . '. Deleted: ' . $self -> deleted);
 
 	return 1;
 
@@ -503,7 +503,7 @@ sub load_session
 
 			$self -> check_expiry;
 
-			($self -> verbose > 1) && $self -> dump('Loaded and expired the session');
+			($self -> verbose > 1) && $self -> dump('Loaded and checked expiry');
 
 			# Check for session parameter expiry.
 
@@ -515,11 +515,11 @@ sub load_session
 				}
 			}
 
-			# We can't do this above, after my($data)..., since it's tested in the 'if', as atime().
+			# We can't do this above, just after my($data)..., since it's used just above, as $self -> atime().
 
 			$self -> atime(time);
 
-			($self -> verbose > 1) && $self -> dump('Loaded and expired the session and/or parameters');
+			($self -> verbose > 1) && $self -> dump('Loaded and checked parameter expiry');
 		}
 	}
 	else
@@ -2191,6 +2191,18 @@ Simple instructions for installing L<Cache::Memcached> and memcached are in L<Da
 
 =over 4
 
+=item o My sessions are not getting written to disk!
+
+This is because you haven't stored anything in them. You're probably thinking sessions are saved just because they exist.
+
+Actually, sessions are only saved if they have at least 1 parameter set. The session id and access/etc times are
+not enough to trigger saving.
+
+Just do something like $session -> param(ok => 1); if you want a session saved just to indicate it exists. Code like this
+sets the modified flag on the session, so that flush() actually does the save.
+
+Also, see </Trouble with Exiting>, below, to understand why flush() must be called explicitly in persistent environments.
+
 =item o Why don't the test scripts use L<Test::Database>?
 
 I decided to circumvent it by using L<DBIx::Admin::DSNManager> and adopting the wonders of nested testing.
@@ -2276,7 +2288,8 @@ session object does not go out of scope in the normal way.
 
 In cases like this, it is mandatory for you to call flush() on the session object before your
 code exits, since persistent environments operate in such a way that the session object's clean-up
-code does not get called. This means that flush() is not called automatically by DESTROY() as you would expect.
+code does not get called. This means that flush() is not called automatically by DESTROY() as you would expect,
+because DESTROY() is not being called.
 
 =item o Creating circular references anywhere in your code
 
