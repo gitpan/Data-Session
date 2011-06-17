@@ -40,7 +40,7 @@ fieldhash my %value       => 'value';
 fieldhash my %verbose     => 'verbose';
 
 our $errstr  = '';
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 # -----------------------------------------------
 

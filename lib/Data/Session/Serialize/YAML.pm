@@ -7,7 +7,7 @@ use warnings;
 
 use YAML::Tiny ();
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 # -----------------------------------------------
 

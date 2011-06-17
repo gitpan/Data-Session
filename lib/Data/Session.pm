@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 # -----------------------------------------------
 
@@ -259,7 +259,7 @@ sub flush
 {
 	my($self) = @_;
 
-	if ($self -> modified && ! $self -> deleted)
+	if ( ($self -> is_new || $self -> modified) && ! $self -> deleted)
 	{
 		$self -> driver_class -> store
 		(

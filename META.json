@@ -4,7 +4,7 @@
       "Ron Savage <ron@savage.net.au>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110580",
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930",
    "license" : [
       "artistic_1"
    ],
@@ -59,119 +59,119 @@
    "provides" : {
       "Data::Session" : {
          "file" : "lib/Data/Session.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Base" : {
          "file" : "lib/Data/Session/Base.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::CGISession" : {
          "file" : "lib/Data/Session/CGISession.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver" : {
          "file" : "lib/Data/Session/Driver.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::BerkeleyDB" : {
          "file" : "lib/Data/Session/Driver/BerkeleyDB.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::File" : {
          "file" : "lib/Data/Session/Driver/File.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::Memcached" : {
          "file" : "lib/Data/Session/Driver/Memcached.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::ODBC" : {
          "file" : "lib/Data/Session/Driver/ODBC.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::Oracle" : {
          "file" : "lib/Data/Session/Driver/Oracle.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::Pg" : {
          "file" : "lib/Data/Session/Driver/Pg.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::SQLite" : {
          "file" : "lib/Data/Session/Driver/SQLite.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Driver::mysql" : {
          "file" : "lib/Data/Session/Driver/mysql.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID" : {
          "file" : "lib/Data/Session/ID.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::AutoIncrement" : {
          "file" : "lib/Data/Session/ID/AutoIncrement.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::MD5" : {
          "file" : "lib/Data/Session/ID/MD5.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::SHA1" : {
          "file" : "lib/Data/Session/ID/SHA1.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::SHA256" : {
          "file" : "lib/Data/Session/ID/SHA256.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::SHA512" : {
          "file" : "lib/Data/Session/ID/SHA512.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::Static" : {
          "file" : "lib/Data/Session/ID/Static.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::UUID16" : {
          "file" : "lib/Data/Session/ID/UUID16.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::UUID34" : {
          "file" : "lib/Data/Session/ID/UUID34.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::UUID36" : {
          "file" : "lib/Data/Session/ID/UUID36.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::ID::UUID64" : {
          "file" : "lib/Data/Session/ID/UUID64.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::SHA" : {
          "file" : "lib/Data/Session/SHA.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Serialize::DataDumper" : {
          "file" : "lib/Data/Session/Serialize/DataDumper.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Serialize::FreezeThaw" : {
          "file" : "lib/Data/Session/Serialize/FreezeThaw.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Serialize::JSON" : {
          "file" : "lib/Data/Session/Serialize/JSON.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Serialize::Storable" : {
          "file" : "lib/Data/Session/Serialize/Storable.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       },
       "Data::Session::Serialize::YAML" : {
          "file" : "lib/Data/Session/Serialize/YAML.pm",
-         "version" : "1.07"
+         "version" : "1.08"
       }
    },
    "release_status" : "stable",
@@ -180,5 +180,5 @@
          "http://opensource.org/licenses/artistic-license.php"
       ]
    },
-   "version" : "1.07"
+   "version" : "1.08"
 }
