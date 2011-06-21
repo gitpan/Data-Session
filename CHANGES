@@ -1,5 +1,12 @@
 Revision history for Perl extension Data::Session.
 
+1.10  Tue Jun 21 16:42:00 2011
+	- After some marvellous debugging by Jeff Lavallee, one of the CPAN testers, I've changed O_RDONLY to O_RDWR in
+	  Data::Session::Driver::File, to deal with a flock problem. This code was copied from CGI::Session, which may
+	  therefore still have the same problem.
+	- Also, $! is now included in error messages, both in Data::Session::Driver::File and Data::Session::ID::AutoIncrement.
+	  Because this reveals directories in paths, $! is only displayed when new(debug => 1) is used in Data::Session.
+
 1.09  Fri Jun 17 14:22:00 2011
 	- Revert change in 1.08, which produces errors during global destruction.
 	  This means, to save a session, you must store something in it, to force the session to be modified.

@@ -7,7 +7,7 @@ use warnings;
 
 use Storable;
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 # -----------------------------------------------
 

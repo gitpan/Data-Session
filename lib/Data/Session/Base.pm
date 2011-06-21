@@ -11,6 +11,7 @@ fieldhash my %data_col_name     => 'data_col_name';
 fieldhash my %data_source       => 'data_source';
 fieldhash my %data_source_attr  => 'data_source_attr';
 fieldhash my %dbh               => 'dbh';
+fieldhash my %debug             => 'debug';
 fieldhash my %deleted           => 'deleted';
 fieldhash my %directory         => 'directory';
 fieldhash my %driver_cless      => 'driver_class';
@@ -47,7 +48,7 @@ fieldhash my %username          => 'username';
 fieldhash my %verbose           => 'verbose';
 
 our $errstr  = '';
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 # -----------------------------------------------
 
@@ -63,3 +64,51 @@ sub log
 # -----------------------------------------------
 
 1;
+
+=pod
+
+=head1 NAME
+
+L<Data::Session::Base> - A persistent session manager
+
+=head1 Synopsis
+
+See L<Data::Session> for details.
+
+=head1 Description
+
+Provide a set of methods for all derived classes, including log().
+
+=head1 Method: new()
+
+This class is never used on its own.
+
+=head1 Method: log($s)
+
+Print the string to STDERR.
+
+If $s is empty, use '' (the empty string), to avoid a warning message.
+
+Lastly, the string is output preceeded by a '#', so it does not interfere with test output.
+That is, log($s) emulates diag $s.
+
+=head1 Support
+
+Log a bug on RT: L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Session>.
+
+=head1 Author
+
+L<Data::Session> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2010.
+
+Home page: L<http://savage.net.au/index.html>.
+
+=head1 Copyright
+
+Australian copyright (c) 2010, Ron Savage.
+
+	All Programs of mine are 'OSI Certified Open Source Software';
+	you can redistribute them and/or modify them under the terms of
+	The Artistic License, a copy of which is available at:
+	http://www.opensource.org/licenses/index.html
+
+=cut

@@ -14,7 +14,7 @@ use Hash::FieldHash ':all';
 
 use Try::Tiny;
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 # -----------------------------------------------
 
@@ -34,6 +34,7 @@ sub get_file_path
 sub init
 {
 	my($self, $arg)  = @_;
+	$$arg{debug}     ||= 0;
 	$$arg{directory} ||= File::Spec -> tmpdir;
 	$$arg{file_name} ||= 'cgisess_%s';
 	$$arg{id}        ||= 0;
@@ -75,7 +76,7 @@ sub remove
 	my($self, $id) = @_;
 	my($file_path) = $self -> get_file_path($id);
 
-	unlink $file_path || die __PACKAGE__ . ". Can't remove file '$file_path'";
+	unlink $file_path || die __PACKAGE__ . ". Can't unlink file '$file_path'. " . ($self -> debug ? $! : '');
 
 	return 1;
 
@@ -87,7 +88,7 @@ sub retrieve
 {
 	my($self, $id) = @_;
 	my($file_path) = $self -> get_file_path($id);
-	my($message)   = __PACKAGE__ . ". Can't %s file: " . $self -> get_file_path($id);
+	my($message)   = __PACKAGE__ . ". Can't %s file '$file_path'. %s";
 
 	(! -e $file_path) && return '';
 
@@ -95,22 +96,22 @@ sub retrieve
 
 	if (-l $file_path)
 	{
-		unlink($file_path) || die sprintf($message, 'unlink');
+		unlink($file_path) || die sprintf($message, 'unlink', $self -> debug ? $! : '');
 	}
 
-	my($mode) = (O_RDONLY | $self -> no_follow);
+	my($mode) = (O_RDWR | $self -> no_follow);
 
 	my($fh);
 
-	sysopen($fh, $file_path, $mode, $self -> umask) || die sprintf($message, 'open');
+	sysopen($fh, $file_path, $mode, $self -> umask) || die sprintf($message, 'open', $self -> debug ? $! : '');
 
 	# Sanity check.
 
-	(-l $file_path) && die sprintf($message, 'open non-link file');
+	(-l $file_path) && die sprintf($message, "open it. It's a link, not a", '');
 
 	if (! $self -> no_flock)
 	{
-		flock($fh, LOCK_EX) || die sprintf($message, 'lock');
+		flock($fh, LOCK_EX) || die sprintf($message, 'lock', $self -> debug ? $! : '');
 	}
 
 	my($data) = '';
@@ -120,7 +121,7 @@ sub retrieve
 		$data .= $_;
 	}
 
-	close($fh) || die sprintf($message, 'close');
+	close($fh) || die sprintf($message, 'close', $self -> debug ? $! : '');
 
 	return $data;
 
@@ -132,34 +133,34 @@ sub store
 {
 	my($self, $id, $data) = @_;
 	my($file_path) = $self -> get_file_path($id);
-	my($message)   = __PACKAGE__ . ". Can't %s file: " . $self -> get_file_path($id);
+	my($message)   = __PACKAGE__ . ". Can't %s file '$file_path'. %s";
 
 	# Remove symlinks if possible.
 
 	if (-l $file_path)
 	{
-		unlink($file_path) || die sprintf($message, 'unlink');
+		unlink($file_path) || die sprintf($message, 'unlink', $self -> debug ? $! : '');
 	}
 
 	my($mode) = -e $file_path ? (O_WRONLY | $self -> no_follow) : (O_RDWR | O_CREAT | O_EXCL);
 
 	my($fh);
 
-	sysopen($fh, $file_path, $mode, $self -> umask) || die sprintf($message, 'open');
+	sysopen($fh, $file_path, $mode, $self -> umask) || die sprintf($message, 'open', $self -> debug ? $! : '');
 
 	# Sanity check.
 
-	(-l $file_path) && die sprintf($message, 'create non-link');
+	(-l $file_path) && die sprintf($message, "create it. It's a link, not a", '');
 
 	if (! $self -> no_flock)
 	{
-		flock($fh, LOCK_EX) || die sprintf($message, 'lock');
+		flock($fh, LOCK_EX) || die sprintf($message, 'lock', $self -> debug ? $! : '');
 	}
 
-	seek($fh, 0, 0)  || die sprintf($message, 'seek');
-	truncate($fh, 0) || die sprintf($message, 'truncate');
+	seek($fh, 0, 0)  || die sprintf($message, 'seek', $self -> debug ? $! : '');
+	truncate($fh, 0) || die sprintf($message, 'truncate', $self -> debug ? $! : '');
 	print $fh $data;
-	close($fh) || die sprintf($message, 'close');
+	close($fh) || die sprintf($message, 'close', $self -> debug ? $! : '');
 
 	return 1;
 
@@ -179,11 +180,15 @@ sub traverse
 	my($pattern) = $self -> file_name;
 	$pattern     =~ s/\./\\./g; # Or /\Q.../.
 	$pattern     =~ s/%s/(\.\+)/;
-	my($message) = __PACKAGE__ . ". Can't open dir '" . $self -> directory . "' in traverse";
+	my($message) = __PACKAGE__ . ". Can't %s dir '" . $self -> directory . "' in traverse. %s";
 
-	opendir(INX, $self -> directory) || die $message;
+	opendir(INX, $self -> directory) || die sprintf($message, 'open', $self -> debug ? $! : '');
 
 	my($entry);
+
+	# I do not use readdir(INX) || die .. here because I could not get it to work,
+	# even with: while ($entry = (readdir(INX) || die sprintf($message, 'read', $!) ) ).
+	# Every attempt triggered the call to die.
 
 	while ($entry = readdir(INX) )
 	{
@@ -192,7 +197,7 @@ sub traverse
 		($entry =~ /$pattern/) && $sub -> ($1);
 	}
 
-	closedir(INX);
+	closedir(INX) || die sprintf($message, 'close', $self -> debug ? $! : '');
 
 	return 1;
 
@@ -242,6 +247,17 @@ at any time.
 
 =over 4
 
+=item o debug => $Boolean
+
+Specifies that debugging should be turned on (1) or off (0) in L<Data::Session::File::Driver> and
+L<Data::Session::ID::AutoIncrement>.
+
+When debug is 1, $! is included in error messages, but because this reveals directory names, it is 0 by default.
+
+This key is optional.
+
+The default value is 0.
+
 =item o directory => $string
 
 Specifies the path to the directory which will contain the session files.
@@ -278,7 +294,7 @@ This key is optional.
 
 Influences the mode to use when calling sysopen() on session files.
 
-'Influences' means the value is bit-wise ored with O_RDONLY for reading and with O_WRONLY for writing.
+'Influences' means the value is bit-wise ored with O_RDWR for reading and with O_WRONLY for writing.
 
 This key is normally passed in as Data::Session -> new(no_follow => $boolean).
 

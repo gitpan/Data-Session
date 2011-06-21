@@ -12,13 +12,14 @@ use Hash::FieldHash ':all';
 fieldhash my %id_length => 'id_length';
 
 our $errstr  = '';
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 # -----------------------------------------------
 
 sub init
 {
 	my($class, $arg)  = @_;
+	$$arg{debug}      ||= 0;
 	$$arg{id}         ||= 0;
 	$$arg{id_base}    ||= 0; # For AutoIncrement.
 	$$arg{id_file}    ||= File::Spec -> catdir(File::Spec -> tmpdir, 'data.session.id'); # For AI.

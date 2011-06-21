@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 # -----------------------------------------------
 
@@ -538,9 +538,10 @@ sub load_session
 sub new
 {
 	my($class, %arg)  = @_;
-	$arg{id}          ||= 0; # new(...).
+	$arg{debug}       ||= 0; # new(...).
 	$arg{deleted}     = 0;   # Internal.
 	$arg{expired}     = 0;   # Internal.
+	$arg{id}          ||= 0; # new(...).
 	$arg{modified}    = 0;   # Internal.
 	$arg{name}        ||= 'CGISESSID'; # new(...).
 	$arg{query}       ||= ''; # new(...).
@@ -1071,6 +1072,17 @@ so that this module can create a database handle.
 If this module does create a database handle, it will also destroy it, whereas if you supply a database
 handle, you are responsible for destroying it.
 
+=item o debug => $Boolean
+
+Specifies that debugging should be turned on (1) or off (0) in L<Data::Session::File::Driver> and
+L<Data::Session::ID::AutoIncrement>.
+
+When debug is 1, $! is included in error messages, but because this reveals directory names, it is 0 by default.
+
+This key is optional.
+
+The default value is 0.
+
 =item o directory => $string
 
 Specifies the directory in which session files are stored, when each session is stored in a separate file
@@ -1188,7 +1200,7 @@ This value is used in these cases:
 
 Influences the mode to use when calling sysopen() on session files.
 
-'Influences' means the value is bit-wise ored with O_RDONLY for reading and with O_WRONLY for writing.
+'Influences' means the value is bit-wise ored with O_RDWR for reading and with O_WRONLY for writing.
 
 This key is optional.
 

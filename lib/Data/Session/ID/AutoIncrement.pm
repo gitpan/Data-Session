@@ -9,25 +9,26 @@ use Fcntl qw/:DEFAULT :flock/;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 # -----------------------------------------------
 
 sub generate
 {
-	my($self) = @_;
+	my($self)    = @_;
+	my($id_file) = $self -> id_file;
 
-	(! $self -> id_file) && die __PACKAGE__ . '. id_file not specifed in new(...)';
+	(! $id_file) && die __PACKAGE__ . '. id_file not specifed in new(...)';
 
-	my($message) = __PACKAGE__ . ". Can't %s id_file '" . $self -> id_file . "'";
+	my($message) = __PACKAGE__ . ". Can't %s id_file '$id_file'. %s";
 
 	my($fh);
 
-	sysopen($fh, $self -> id_file, O_RDWR | O_CREAT, $self -> umask) || die sprintf($message, 'open');
+	sysopen($fh, $id_file, O_RDWR | O_CREAT, $self -> umask) || die sprintf($message, 'open', $self -> debug ? $! : '');
 
 	if (! $self -> no_flock)
 	{
-		flock($fh, LOCK_EX) || die sprintf($message, 'lock');
+		flock($fh, LOCK_EX) || die sprintf($message, 'lock', $self -> debug ? $! : '');
 	}
 
 	my($id) = <$fh>;
@@ -39,10 +40,10 @@ sub generate
 
 	$id += $self -> id_step;
 
-	seek($fh, 0, 0)  || die sprintf($message, 'seek');
-	truncate($fh, 0) || die sprintf($message, 'truncate');
+	seek($fh, 0, 0)  || die sprintf($message, 'seek', $self -> debug ? $! : '');
+	truncate($fh, 0) || die sprintf($message, 'truncate', $self -> debug ? $! : '');
 	print $fh $id;
-	close $fh || die sprintf($message, 'close');
+	close $fh || die sprintf($message, 'close', $self -> debug ? $! : '');
 
 	return $id;
 
