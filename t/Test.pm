@@ -12,6 +12,7 @@ use DBI;
 
 use DBIx::Admin::CreateTable;
 
+use File::Basename;
 use File::Spec;
 
 use Hash::FieldHash ':all';
@@ -40,7 +41,7 @@ fieldhash my %value       => 'value';
 fieldhash my %verbose     => 'verbose';
 
 our $errstr  = '';
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 # -----------------------------------------------
 
@@ -52,9 +53,8 @@ sub check_sqlite_directory_exists
 
 	if ($dsn[4] && ($dsn[1] =~ /^SQLite/i) )
 	{
-		my($dummy, $dir_name) = split(/=/, $dsn[4]);
-		$dir_name             =~ s|^(.*)/.*$|$1|;
-		$result               = 0 if (! -e $dir_name);
+		my($file, $dir, $suffix) = fileparse($dsn[4]);
+		$result                  = 0 if (! -e $dir);
 	}
 
 	return $result;
@@ -361,7 +361,7 @@ sub setup_table
 	$self -> column_type($vendor eq 'ORACLE' ? 'long' : $vendor eq 'POSTGRESQL' ? 'bytea' : 'text');
 	$self -> engine($vendor =~ /(?:Mysql)/i ? 'engine=innodb' : '');
 	$self -> creator -> drop_table($self -> table_name);
-		$self -> create_table($self -> table_name, $id_length);
+	$self -> create_table($self -> table_name, $id_length);
 
 	if ($self -> table_exists == 0)
 	{
@@ -457,7 +457,7 @@ sub test_expire_a_session_parameter
 	$self -> log;
 	$self -> log("Testing expire a session parameter. Sleeping for $delay second ...");
 
-	$delay = 2 * $delay;
+	$delay = 3 * $delay;
 
 	sleep($delay);
 
@@ -535,7 +535,7 @@ sub test_expire_the_session
 	$self -> log;
 	$self -> log("Testing expire the session. Sleeping for $delay second ...");
 
-	$delay = 2 * $delay;
+	$delay = 3 * $delay;
 
 	sleep($delay);
 

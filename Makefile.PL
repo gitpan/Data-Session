@@ -26,6 +26,7 @@ WriteMakefile
  {
 	 autovivification         => 0.06,
 	 CGI                      => 3.50,
+	 Config::Tiny             => 2.14,
 	 Data::Dumper             => 2.128,
 	 Data::UUID               => 1.217,
 	 DBD::SQLite              => 1.13,
@@ -33,7 +34,6 @@ WriteMakefile
 	 Digest::MD5              => 2.51,
 	 Digest::SHA              => 5.48,
 	 DBIx::Admin::CreateTable => 2.07,
-	 DBIx::Admin::DSNManager  => 1.00,
 	 Fcntl                    => 1.06,
 	 File::Path               => 2.08,
 	 File::Slurp              => 9999.13,

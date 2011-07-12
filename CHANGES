@@ -1,5 +1,12 @@
 Revision history for Perl extension Data::Session.
 
+1.11  Fri Jul  8 11:17:00 2011
+	- Replace DBIx::Admin::DSNManager with Config::Tiny, to make it easier to put Data::Session into Debian.
+	- In Build.PL, shift DBIx::Admin::CreateTable from requires to build_requires. Config::Tiny goes there too.
+	- In the test code, change both sleeps from 2 to 3 seconds, to see if that solves rare test failures.
+	- In the test code, use File::Basename's fileparse rather than a regexp to see if the SQLite directory exists.
+	  This should fix some test failures under Windows.
+
 1.10  Tue Jun 21 16:42:00 2011
 	- After some marvellous debugging by Jeff Lavallee, one of the CPAN testers, I've changed O_RDONLY to O_RDWR in
 	  Data::Session::Driver::File, to deal with a flock problem. This code was copied from CGI::Session, which may

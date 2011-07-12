@@ -5,9 +5,9 @@ use lib 't';
 use strict;
 use warnings;
 
-use DBI;
+use Config::Tiny;
 
-use DBIx::Admin::DSNManager;
+use DBI;
 
 use File::Spec;
 use File::Temp;
@@ -205,8 +205,37 @@ sub run
 
 # -----------------------------------------------
 
+sub string2hashref
+{
+	my($s)      = @_;
+	$s          ||= '';
+	my($result) = {};
+
+	if ($s)
+	{
+		if ($s =~ m/^\{\s*([^}]*)\}$/)
+		{
+			my(@attr) = map{split(/\s*=>\s*/)} split(/\s*,\s*/, $1);
+
+			if (@attr)
+			{
+				$result = {@attr};
+			}
+		}
+		else
+		{
+			die "Invalid syntax for hashref: $s";
+		}
+	}
+
+	return $result;
+
+} # End of string2hashref.
+
+# -----------------------------------------------
+
 my($ini_file)   = shift || 't/basic.ini';
-my($dsn_config) = DBIx::Admin::DSNManager -> new(file_name => $ini_file) -> config;
+my($dsn_config) = Config::Tiny -> read($ini_file);
 my($test_count) = 1; # The use_ok in BEGIN counts as the first test.
 
 my($config);
@@ -214,7 +243,8 @@ my($temp, $tester);
 
 for my $dsn_name (sort keys %$dsn_config)
 {
-	$config = $$dsn_config{$dsn_name};
+	$config              = $$dsn_config{$dsn_name};
+	$$config{attributes} = string2hashref($$config{attributes});
 
 	next if ( ($$config{active} == 0) || ($$config{use_for_testing} == 0) );
 

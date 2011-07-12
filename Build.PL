@@ -8,8 +8,10 @@ Module::Build -> new
  dist_author    => 'Ron Savage <ron@savage.net.au>',
  build_requires =>
  {
-	 Test::More => 0.96,
-	 Test::Pod  => 1.44,
+	 Config::Tiny             => 2.14,
+	 DBIx::Admin::CreateTable => 2.07,
+	 Test::More               => 0.96,
+	 Test::Pod                => 1.44,
  },
  configure_requires =>
  {
@@ -25,8 +27,6 @@ Module::Build -> new
 	 DBI                      => 1.615,
 	 Digest::MD5              => 2.51,
 	 Digest::SHA              => 5.48,
-	 DBIx::Admin::CreateTable => 2.07,
-	 DBIx::Admin::DSNManager  => 1.00,
 	 Fcntl                    => 1.06,
 	 File::Path               => 2.08,
 	 File::Slurp              => 9999.13,

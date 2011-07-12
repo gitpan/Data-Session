@@ -10,7 +10,7 @@ use Digest::MD5;
 use Hash::FieldHash ':all';
 
 our $errstr  = '';
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 # -----------------------------------------------
 
