@@ -5,14 +5,14 @@ use lib 't';
 use strict;
 use warnings;
 
+use Class::Load ':all'; # For try_load_class() and is_class_loaded().
+
 use Config::Tiny;
 
 use DBI;
 
 use File::Spec;
 use File::Temp;
-
-use Module::Load (); # For load().
 
 use Test;
 use Test::More;
@@ -28,12 +28,15 @@ sub BEGIN { use_ok('Data::Session'); }
 sub prepare_berkeleydb
 {
 	my($self, $config) = @_;
+	my($class) = 'BerkeleyDB';
 
 	my($cache);
 
 	try
 	{
-		Module::Load::load('BerkeleyDB');
+		try_load_class($class);
+
+		die "Unable to load class '$class'" if (! is_class_loaded($class) );
 
 		my($env) = BerkeleyDB::Env -> new
 		(
@@ -56,12 +59,12 @@ sub prepare_berkeleydb
 			# Avoid used-once warning.
 			$BerkeleyDB::Error ||= $BerkeleyDB::Error;
 
-			report("Skipping test. BerkeleyDB error: $BerkeleyDB::Error");
+			report("Skipping test. $class error: $BerkeleyDB::Error");
 		}
 	}
 	catch
 	{
-		report('Skipping test. Cannot load BerkeleyDB');
+		report("Skipping test. Cannot load $class");
 	};
 
 	return $cache;
@@ -73,12 +76,15 @@ sub prepare_berkeleydb
 sub prepare_memcached
 {
 	my($self, $config) = @_;
+	my($class) = 'Cache::Memcached';
 
 	my($cache);
-	
+
 	try
 	{
-		Module::Load::load('Cache::Memcached');
+		try_load_class($class);
+
+		die "Unable to load class '$class'" if (! is_class_loaded($class) );
 
 		# Do a simple check to see if memcached is running.
 
@@ -100,7 +106,7 @@ sub prepare_memcached
 	}
 	catch
 	{
-		report('Skipping test. Cannot load Cache::Memcache');
+		report("Skipping test. Cannot load $class");
 	};
 
 	return $cache;

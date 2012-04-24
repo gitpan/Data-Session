@@ -9,7 +9,7 @@ use Fcntl qw/:DEFAULT :flock/;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 
@@ -123,7 +123,7 @@ This key is normally passed in as Data::Session -> new(id_base => $integer).
 
 Note: The first id returned by generate() is id_base + id_step.
 
-The default value is 0.
+Default: 0.
 
 This key is optional.
 
@@ -135,10 +135,11 @@ This key is normally passed in as Data::Session -> new(id_file => $file_name).
 
 Note: The next id returned by generate() is 'current' id + id_step.
 
-The default value is File::Spec -> catdir(File::Spec -> tmpdir, 'data.session.id').
+Default: File::Spec -> catdir(File::Spec -> tmpdir, 'data.session.id').
 
 The reason Data::Session -> new(directory => ...) is not used as the default directory is because
-this latter option is for where the session files are stored if the driver is File.
+this latter option is for where the session files are stored if the driver is File and the id
+generator is not AutoIncrement.
 
 This key is optional.
 
@@ -148,7 +149,7 @@ Specifies the amount to be added to the previous id to get the next id.
 
 This key is normally passed in as Data::Session -> new(id_step => $integer).
 
-The default value is 1.
+Default: 1.
 
 This key is optional.
 
@@ -159,7 +160,7 @@ before processing it, or (no_flock => 0) to use flock().
 
 This key is normally passed in as Data::Session -> new(no_flock => $boolean).
 
-The default value is 0.
+Default: 0.
 
 This key is optional.
 
@@ -169,7 +170,7 @@ Specifies the mode to use when calling sysopen() on $file_name.
 
 This key is normally passed in as Data::Session -> new(umask => $octal_value).
 
-The default value is 0660.
+Default: 0660.
 
 This key is optional.
 

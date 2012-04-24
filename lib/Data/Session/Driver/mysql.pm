@@ -7,7 +7,7 @@ use warnings;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 
@@ -113,7 +113,7 @@ Specifes the name of the column in the sessions table which holds the session da
 
 This key is normally passed in as Data::Session -> new(data_col_name => $string).
 
-The default value is 'a_session'.
+Default: 'a_session'.
 
 This key is optional.
 
@@ -124,7 +124,7 @@ obtain a database handle.
 
 This key is normally passed in as Data::Session -> new(data_source => $string).
 
-The default value is ''.
+Default: ''.
 
 This key is optional, as long as a value is supplied for 'dbh'.
 
@@ -135,7 +135,7 @@ obtain a database handle.
 
 This key is normally passed in as Data::Session -> new(data_source_attr => $hashref).
 
-The default value is {AutoCommit => 1, PrintError => 0, RaiseError => 1}.
+Default: {AutoCommit => 1, PrintError => 0, RaiseError => 1}.
 
 This key is optional.
 
@@ -159,7 +159,7 @@ If not specified, this module will use the values of these keys to obtain a data
 
 =back
 
-The default value is ''.
+Default: ''.
 
 This key is optional.
 
@@ -176,7 +176,7 @@ Specifes the name of the column in the sessions table which holds the session id
 
 This key is normally passed in as Data::Session -> new(id_col_name => $string).
 
-The default value is 'id'.
+Default: 'id'.
 
 This key is optional.
 
@@ -187,7 +187,7 @@ obtain a database handle.
 
 This key is normally passed in as Data::Session -> new(password => $string).
 
-The default value is ''.
+Default: ''.
 
 This key is optional.
 
@@ -214,7 +214,7 @@ Specifes the name of the sessions table.
 
 This key is normally passed in as Data::Session -> new(table_name => $string).
 
-The default value is 'sessions'.
+Default: 'sessions'.
 
 This key is optional.
 
@@ -225,7 +225,7 @@ obtain a database handle.
 
 This key is normally passed in as Data::Session -> new(username => $string).
 
-The default value is ''.
+Default: ''.
 
 This key is optional.
 

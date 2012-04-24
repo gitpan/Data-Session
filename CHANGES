@@ -1,5 +1,20 @@
 Revision history for Perl extension Data::Session.
 
+1.12  Tue Apr 24 15:13:00 2012
+	- After prompting by William Bulley (many thanx!) I found a range of issues which have been addressed:
+	- Some combinations of options to new() triggered an unjustifiable die, so code in validate_options()
+		has been simplified.
+	- Add new demos in scripts/: cgi.demo.cgi (CGI script), cgi.sha1.pl (command line script), and file.sha1.pl.
+	- Copy scripts/cgi.demo.cgi into the Synopsis, since such a self-contained CGI demo was lacking.
+	- Copy scripts/file.sha1.pl into the Synopsis, to go with scripts/file.autoincrement.pl. These demonstrate
+		the different uses of file_name and id_file as options to new().
+	- Clean up some typos within the other demo code in the Synopsis.
+	- Clean up similar typos in scripts/file.autoincrement.pl.
+	- Expand the discussion of how certain options to new() interact. See Combinations of Options.
+	- Fix various typos throughout the PODs.
+	- Switch from Module::Load to Class::Load.
+	- Change the versions of the pre-reqs to correspond to what was available with Perl V 5.10.1.
+
 1.11  Fri Jul  8 11:17:00 2011
 	- Replace DBIx::Admin::DSNManager with Config::Tiny, to make it easier to put Data::Session into Debian.
 	- In Build.PL, shift DBIx::Admin::CreateTable from requires to build_requires. Config::Tiny goes there too.

@@ -1,6 +1,6 @@
 package Data::Session::CGISession;
 
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 
@@ -51,7 +51,7 @@ retain it's major features:
 
 This determines the type of session object you wish to create.
 
-The default value is 'driver:File;id:MD5;serialize:DataDumper'.
+Default: 'driver:File;id:MD5;serialize:DataDumper'.
 
 And specifically, the format of that case-sensitive string is as expected. See
 L<Data::Session/Specifying Session Options> for details.
@@ -94,7 +94,7 @@ passed in to new, as Data::Session -> new(type => $string).
 
 A sample string looks like 'driver:BerkeleyDB;id:SHA1;serialize:DataDumper'.
 
-Abbreviation of component key names ('driver', 'id', 'serializer') is not supported.
+Abbreviation of component key names ('driver', 'id', 'serialize') is not supported.
 
 Such abbreviations were previously handled by L<Text::Abbrev>. Now, these must be named in full.
 
@@ -275,7 +275,7 @@ Serializing classes have been renamed:
 
 =item o CGI::Session::Serialize::json becomes L<Data::Session::Serialize::JSON>
 
-The latter will use L<JSON>. In the past L<YAML::Syck> was used.
+The latter will use L<JSON>. In the past L<JSON::Syck> was used.
 
 =item o CGI::Session::Serialize::storable becomes L<Data::Session::Serialize::Storable>
 
@@ -394,7 +394,7 @@ The latter no longer uses DB_File.
 
 =item o CGI::Session::Driver::odbc becomes L<Data::Session::Driver::ODBC>
 
-=item o CGI::Session::Driver::odbc becomes L<Data::Session::Driver::Oracle>
+=item o CGI::Session::Driver::oracle becomes L<Data::Session::Driver::Oracle>
 
 =item o CGI::Session::Driver::postgresql becomes L<Data::Session::Driver::Pg>
 

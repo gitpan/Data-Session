@@ -12,7 +12,7 @@ use Hash::FieldHash ':all';
 fieldhash my %id_length => 'id_length';
 
 our $errstr  = '';
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 
@@ -21,7 +21,7 @@ sub init
 	my($class, $arg)  = @_;
 	$$arg{debug}      ||= 0;
 	$$arg{id}         ||= 0;
-	$$arg{id_base}    ||= 0; # For AutoIncrement.
+	$$arg{id_base}    ||= 0; # For AutoIncrement (AI).
 	$$arg{id_file}    ||= File::Spec -> catdir(File::Spec -> tmpdir, 'data.session.id'); # For AI.
 	$$arg{id_length}  = 0;   # For UUID.
 	$$arg{id_step}    ||= 1; # For AI.

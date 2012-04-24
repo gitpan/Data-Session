@@ -9,7 +9,7 @@ use Data::UUID;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 

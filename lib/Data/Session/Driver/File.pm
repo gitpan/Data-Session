@@ -14,7 +14,7 @@ use Hash::FieldHash ':all';
 
 use Try::Tiny;
 
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 
@@ -53,7 +53,7 @@ sub new
 
 	$class -> init(\%arg);
 
-	my($self)  = from_hash(bless({}, $class), \%arg);
+	my($self) = from_hash(bless({}, $class), \%arg);
 
 	($self -> file_name !~ /%s/) && die __PACKAGE__ . ". file_name must contain %s";
 
@@ -256,7 +256,7 @@ When debug is 1, $! is included in error messages, but because this reveals dire
 
 This key is optional.
 
-The default value is 0.
+Default: 0.
 
 =item o directory => $string
 
@@ -264,7 +264,7 @@ Specifies the path to the directory which will contain the session files.
 
 This key is normally passed in as Data::Session -> new(directory => $string).
 
-The default value is File::Spec -> tmpdir.
+Default: File::Spec -> tmpdir.
 
 This key is optional.
 
@@ -275,7 +275,7 @@ session id before the pattern is used as a file name.
 
 This key is normally passed in as Data::Session -> new(file_name => $string_containing_%s).
 
-The default value is 'cgisess_%s'.
+Default: 'cgisess_%s'.
 
 This key is optional.
 
@@ -286,7 +286,7 @@ or (no_flock => 0) to use flock().
 
 This key is normally passed in as Data::Session -> new(no_flock => $boolean).
 
-The default value is 0.
+Default: 0.
 
 This key is optional.
 
@@ -298,7 +298,7 @@ Influences the mode to use when calling sysopen() on session files.
 
 This key is normally passed in as Data::Session -> new(no_follow => $boolean).
 
-The default value is eval{O_NOFOLLOW} || 0.
+Default: eval{O_NOFOLLOW} || 0.
 
 This key is optional.
 
@@ -308,7 +308,7 @@ Specifies the mode to use when calling sysopen() on session files.
 
 This key is normally passed in as Data::Session -> new(umask => $octal_value).
 
-The default value is 0660.
+Default: 0660.
 
 This key is optional.
 

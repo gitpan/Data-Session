@@ -13,19 +13,17 @@ use File::Temp;
 # The EXLOCK is for BSD-based systems.
 
 my($directory) = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
-my($file_name) = 'autoinc.session.dat';
-my($id_file)   = File::Spec -> catfile($directory, $file_name);
-my($type)      = 'driver:File;id:AutoIncrement;serialize:DataDumper'; # Case-sensitive.
+my($file_name) = 'session.%s.dat';
+my($type)      = 'driver:File;id:SHA1;serialize:DataDumper'; # Case-sensitive.
 
 my($id);
 
 {
 my($session) = Data::Session -> new
 (
-	id_base     => 99,
-	id_file     => $id_file,
-	id_step     => 2,
-	type        => $type,
+	directory => $directory,
+	file_name => $file_name,
+	type      => $type,
 ) || die $Data::Session::errstr;
 
 $id = $session -> id;
@@ -38,9 +36,10 @@ print "Id: $id. Save: a_key => a_value. \n";
 {
 my($session) = Data::Session -> new
 (
-	id      => $id,
-	id_file => $id_file,
-	type    => $type,
+	directory => $directory,
+	file_name => $file_name,
+	id        => $id,
+	type      => $type,
 ) || die $Data::Session::errstr;
 
 print "Id: $id. Recover: a_key => ", $session -> param('a_key'), ". \n";

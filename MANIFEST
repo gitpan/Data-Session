@@ -37,10 +37,13 @@ META.json
 META.yml
 README
 scripts/berkeleydb.pl
+scripts/cgi.demo.cgi
+scripts/cgi.sha1.pl
 scripts/cookie.pl
 scripts/digest.pl
 scripts/expire.pl
 scripts/file.autoincrement.pl
+scripts/file.sha1.pl
 scripts/memcached.pl
 scripts/sqlite.pl
 t/basic.ini

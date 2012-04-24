@@ -5,12 +5,12 @@ no autovivification;
 use strict;
 use warnings;
 
+use Class::Load ':all'; # For try_load_class() and is_class_loaded().
+
 use File::Spec;  # For catdir.
 use File::Slurp; # For read_dir.
 
 use Hash::FieldHash ':all';
-
-use Module::Load (); # For load(), but we also have a load().
 
 use Try::Tiny;
 
@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 
@@ -362,15 +362,17 @@ sub http_header
 sub load_driver
 {
 	my($self, $arg) = @_;
-	my($module)     = join('::', __PACKAGE__, 'Driver', $self -> driver_option);
+	my($class)      = join('::', __PACKAGE__, 'Driver', $self -> driver_option);
 
-	Module::Load::load($module);
+	try_load_class($class);
 
-	($self -> verbose > 1) && $self -> log("Loaded driver_option: $module");
+	die __PACKAGE__ . ". Unable to load class '$class'" if (! is_class_loaded($class) );
 
-	$self -> driver_class($module -> new(%$arg) );
+	($self -> verbose > 1) && $self -> log("Loaded driver_option: $class");
 
-	($self -> verbose > 1) && $self -> log("Initialized driver_class: $module");
+	$self -> driver_class($class -> new(%$arg) );
+
+	($self -> verbose > 1) && $self -> log("Initialized driver_class: $class");
 
 } # End of load_driver.
 
@@ -379,15 +381,17 @@ sub load_driver
 sub load_id_generator
 {
 	my($self, $arg)  = @_;
-	my($module)      = join('::', __PACKAGE__, 'ID', $self -> id_option);
+	my($class)       = join('::', __PACKAGE__, 'ID', $self -> id_option);
 
-	Module::Load::load($module);
+	try_load_class($class);
 
-	($self -> verbose > 1) && $self -> log("Loaded id_option: $module");
+	die __PACKAGE__ . ". Unable to load class '$class'" if (! is_class_loaded($class) );
 
-	$self -> id_class($module -> new(%$arg) );
+	($self -> verbose > 1) && $self -> log("Loaded id_option: $class");
 
-	($self -> verbose > 1) && $self -> log("Initialized id_class: $module");
+	$self -> id_class($class -> new(%$arg) );
+
+	($self -> verbose > 1) && $self -> log("Initialized id_class: $class");
 
 } # End of load_id_generator.
 
@@ -430,13 +434,17 @@ sub load_query_class
 
 	if (! $self -> query)
 	{
-		Module::Load::load($self -> query_class);
+		my($class) = $self -> query_class;
 
-		($self -> verbose > 1) && $self -> log('Loaded query_class: ' . $self -> query_class);
+		try_load_class($class);
 
-		$self -> query($self -> query_class -> new);
+		die __PACKAGE__ . ". Unable to load class '$class'" if (! is_class_loaded($class) );
 
-		($self -> verbose > 1) && $self -> log('Called query_class -> new: ' . $self -> query_class);
+		($self -> verbose > 1) && $self -> log('Loaded query_class: ' . $class);
+
+		$self -> query($class -> new);
+
+		($self -> verbose > 1) && $self -> log('Called query_class -> new: ' . $class);
 	}
 
 	return $self -> query;
@@ -448,15 +456,17 @@ sub load_query_class
 sub load_serializer
 {
 	my($self, $arg) = @_;
-	my($module)     = join('::', __PACKAGE__, 'Serialize', $self -> serializer_option);
+	my($class)      = join('::', __PACKAGE__, 'Serialize', $self -> serializer_option);
 
-	Module::Load::load($module);
+	try_load_class($class);
 
-	($self -> verbose > 1) && $self -> log("Loaded serializer_option: $module");
+	die __PACKAGE__ . ". Unable to load class '$class'" if (! is_class_loaded($class) );
 
-	$self -> serializer_class($module -> new(%$arg) );
+	($self -> verbose > 1) && $self -> log("Loaded serializer_option: $class");
 
-	($self -> verbose > 1) && $self -> log("Initialized serializer_class: $module");
+	$self -> serializer_class($class -> new(%$arg) );
+
+	($self -> verbose > 1) && $self -> log("Initialized serializer_class: $class");
 
 } # End of load_serializer.
 
@@ -861,11 +871,6 @@ sub validate_options
 		die __PACKAGE__ . '. When using id:Static, you must provide a (true) id to new(id => ...)';
 	}
 
-	if (! ($self -> cache || $self -> dbh || $self -> data_source) )
-	{
-		die __PACKAGE__ . '. You must provide either a cache, a data_source or a dbh to new(...)';
-	}
-
 } # End of validate_options.
 
 # -----------------------------------------------
@@ -903,9 +908,89 @@ sub validate_time
 
 =head1 NAME
 
-L<Data::Session> - A persistent session manager
+Data::Session - Persistent session data management
 
 =head1 Synopsis
+
+A self-contained CGI script (scripts/cgi.demo.cgi):
+
+	#!/usr/bin/perl
+
+	use CGI;
+
+	use Data::Session;
+
+	use File::Spec;
+
+	# ----------------------------------------------
+
+	sub generate_html
+	{
+		my($name, $id, $count) = @_;
+		$id        ||= '';
+		my($title) = "CGI demo for Data::Session";
+		return     <<EOS;
+	<html>
+	<head><title>$title</title></head>
+	<body>
+		Number of times this script has been run: $count.<br/>
+		Current value of $name: $id.<br/>
+		<form id='sample' method='post' name='sample'>
+		<button id='submit'>Click to submit</button>
+		<input type='hidden' name='$name' id='$name' value='$id' />
+		</form>
+	</body>
+	</html>
+	EOS
+
+	} # End of generate_html.
+
+	# ----------------------------------------------
+
+	my($q)        = CGI -> new;
+	my($name)     = 'sid'; # CGI form field name.
+	my($sid)      = $q -> param($name);
+	my($dir_name) = '/tmp';
+	my($type)     = 'driver:File;id:MD5;serialize:JSON';
+	my($session)  = Data::Session -> new
+	(
+		directory => $dir_name,
+		name      => $name,
+		query     => $q,
+		type      => $type,
+	);
+	my($id) = $session -> id;
+
+	# First entry ever?
+
+	my($count);
+
+	if ($sid) # Not $id, which always has a value...
+	{
+		# No. The CGI form field called sid has a (true) value.
+		# So, this is the code for the second and subsequent entries.
+		# Count the # of times this CGI script has been run.
+
+		$count = $session -> param('count') + 1;
+	}
+	else
+	{
+		# Yes. There is no CGI form field called sid (with a true value).
+		# So, this is the code for the first entry ever.
+		# Count the # of times this CGI script has been run.
+
+		$count = 0;
+	}
+
+	$session -> param(count => $count);
+
+	print $q -> header, generate_html($name, $id, $count);
+
+	# Calling flush() is good practice, rather than hoping 'things just work'.
+	# In a persistent environment, this call is mandatory...
+	# But you knew that, because you'd read the docs, right?
+
+	$session -> flush;
 
 A basic session. See scripts/sqlite.pl:
 
@@ -970,17 +1055,56 @@ Using memcached as a cache manager. See scripts/memcached.pl:
 Using a file to hold the ids. See scripts/file.autoincrement.pl:
 
 	# The EXLOCK is for BSD-based systems.
-	my($directory)   = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
-	my($data_source) = 'dbi:SQLite:dbname=' . File::Spec -> catdir($directory, 'sessions.sqlite');
-	my($file_name)   = File::Temp -> new(EXLOCK => 0);
-	my($type)        = 'driver:File;id:AutoIncrement;serialize:DataDumper'; # Case-sensitive.
-	my($session)     = Data::Session -> new
+	my($directory) = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
+	my($file_name) = 'autoinc.session.dat';
+	my($id_file)   = File::Spec -> catfile($directory, $file_name);
+	my($type)      = 'driver:File;id:AutoIncrement;serialize:DataDumper'; # Case-sensitive.
+	my($session)   = Data::Session -> new
 	(
-		data_source => $data_source,
 		id_base     => 99,
-		id_file     => $file_name,
+		id_file     => $id_file,
 		id_step     => 2,
 		type        => $type,
+	) || die $Data::Session::errstr;
+
+Using a file to hold the ids. See scripts/file.sha1.pl (non-CGI context):
+
+	my($directory) = '/tmp';
+	my($file_name) = 'session.%s.dat';
+	my($type)      = 'driver:File;id:SHA1;serialize:DataDumper'; # Case-sensitive.
+
+	# Create the session:
+	my($session)   = Data::Session -> new
+	(
+		directory => $directory,
+		file_name => $file_name,
+		type      => $type,
+	) || die $Data::Session::errstr;
+
+	# Time passes...
+
+	# Retrieve the session:
+	my($id)      = $session -> id;
+	my($session) = Data::Session -> new
+	(
+		directory => $directory,
+		file_name => $file_name,
+		id        => $id, # <== Look! You must supply the id for retrieval.
+		type      => $type,
+	) || die $Data::Session::errstr;
+
+As a variation on the above, see scripts/cgi.sha1.pl (CGI context but command line program):
+
+	# As above (scripts/file.sha1.pl), for creating the session. Then...
+
+	# Retrieve the session:
+	my($q)       = CGI -> new; # CGI form data provides the id.
+	my($session) = Data::Session -> new
+	(
+		directory => $directory,
+		file_name => $file_name,
+		query     => $q, # <== Look! You must supply the id for retrieval.
+		type      => $type,
 	) || die $Data::Session::errstr;
 
 Also, much can be gleaned from t/basic.t and t/Test.pm. See L</Test Code>.
@@ -1034,13 +1158,15 @@ Only needed if you use 'type' like 'driver:BerkeleyDB ...' or 'driver:Memcached 
 
 See L<Data::Session::Driver::BerkeleyDB> and L<Data::Session::Driver::Memcached>.
 
+Default: '' (the empty string).
+
 =item o data_col_name => $string
 
 Specifies the name of the column holding the session data, in the session table.
 
 This key is optional.
 
-The default value is 'a_session'.
+Default: 'a_session'.
 
 =item o data_source => $string
 
@@ -1050,7 +1176,7 @@ A typical value would be 'dbi:Pg:dbname=project'.
 
 This key is optional. It is only used if you do not supply a value for the 'dbh' key.
 
-The default value is '' (the empty string).
+Default: '' (the empty string).
 
 =item o data_source_attrs => $hashref
 
@@ -1058,7 +1184,7 @@ Specify a hashref of options to use as the last parameter in the call to L<DBI>'
 
 This key is optional. It is only used if you do not supply a value for the 'dbh' key.
 
-The default value is {AutoCommit => 1, PrintError => 0, RaiseError => 1}.
+Default: {AutoCommit => 1, PrintError => 0, RaiseError => 1}.
 
 =item o dbh => $dbh
 
@@ -1081,7 +1207,7 @@ When debug is 1, $! is included in error messages, but because this reveals dire
 
 This key is optional.
 
-The default value is 0.
+Default: 0.
 
 =item o directory => $string
 
@@ -1090,7 +1216,7 @@ Specifies the directory in which session files are stored, when each session is 
 
 This key is optional.
 
-The default value is your temp directory as determined by L<File::Spec>.
+Default: Your temp directory as determined by L<File::Spec>.
 
 See L</Specifying Session Options> for details.
 
@@ -1101,7 +1227,7 @@ Specifies the syntax for the names of session files, when each session is stored
 
 This key is optional.
 
-The default value is 'cgisess_%s', where the %s is replaced at run-time by the session id.
+Default: 'cgisess_%s', where the %s is replaced at run-time by the session id.
 
 The directory in which these files are stored is specified by the 'directory' option above.
 
@@ -1113,7 +1239,7 @@ Specifies a host, typically for use with a data_source referring to MySQL.
 
 This key is optional.
 
-The default value is '' (the empty string).
+Default: '' (the empty string).
 
 =item o id => $string
 
@@ -1121,7 +1247,7 @@ Specifies an id to retrieve from storage.
 
 This key is optional.
 
-The default value is 0.
+Default: 0.
 
 Note: If you do not provide an id here, the module calls L</user_id()> to determine whether or not
 an id is available from a cookie or a form field.
@@ -1134,7 +1260,7 @@ Specifies the name of the column holding the session id, in the session table.
 
 This key is optional.
 
-The default value is 'id'.
+Default: 'id'.
 
 =item o id_base => $integer
 
@@ -1145,7 +1271,7 @@ So, if id_base is 1000 and id_step is 10, then the lowest id will be 1010.
 
 This key is optional.
 
-The default value is 0.
+Default: 0.
 
 =item o id_file => $file_path_and_name
 
@@ -1153,11 +1279,11 @@ Specifies the file path and name in which to store the last used id, as calculat
 when using the '... id:AutoIncrement ...' component in the 'type'.
 
 This value must contain a path because the 'directory' option above is only used for session files
-(when using L<Data::Session::Driver::File>.
+(when using L<Data::Session::Driver::File>).
 
 This key is optional.
 
-The default is File::Spec -> catdir(File::Spec -> tmpdir, 'data.session.id').
+Default: File::Spec -> catdir(File::Spec -> tmpdir, 'data.session.id').
 
 =item o id_step => $integer
 
@@ -1165,7 +1291,7 @@ Specifies the step size between ids when using the '... id:AutoIncrement ...' co
 
 This key is optional.
 
-The default value is 1.
+Default: 1.
 
 =item o name => $string
 
@@ -1173,7 +1299,7 @@ Specifies the name of the cookie or form field which holds the session id.
 
 This key is optional.
 
-The default value is 'CGISESSID'.
+Default: 'CGISESSID'.
 
 Usage of 'name' is discussed in the sections L</Specifying an Id> and L</user_id()>.
 
@@ -1184,7 +1310,7 @@ or (no_flock => 0) to use flock().
 
 This key is optional.
 
-The default value is 0.
+Default: 0.
 
 This value is used in these cases:
 
@@ -1192,7 +1318,7 @@ This value is used in these cases:
 
 =item o type => 'driver:File ...'
 
-=item o tpe => '... id:AutoIncrement ...'
+=item o type => '... id:AutoIncrement ...'
 
 =back
 
@@ -1204,7 +1330,7 @@ Influences the mode to use when calling sysopen() on session files.
 
 This key is optional.
 
-The default value is eval { O_NOFOLLOW } || 0.
+Default: eval { O_NOFOLLOW } || 0.
 
 This value is used in this case:
 
@@ -1220,7 +1346,7 @@ Specifies a value to use as the 3rd parameter in the call to L<DBI>'s connect() 
 
 This key is optional. It is only used if you do not supply a value for the 'dbh' key.
 
-The default value is '' (the empty string).
+Default: '' (the empty string).
 
 =item o pg_bytea => $boolean
 
@@ -1229,7 +1355,7 @@ in the session table.
 
 This key is optional, but see the section, L</Combinations of Options> for how it interacts with the pg_text key.
 
-The default value is 0.
+Default: 0.
 
 Warning: Columns of type bytea can hold null characters (\x00), whereas columns of type text cannot.
 
@@ -1239,7 +1365,7 @@ Specifies that you're using a Postgres-specific column type of 'text' to hold th
 
 This key is optional, but see the section, L</Combinations of Options> for how it interacts with the pg_bytea key.
 
-The default value is 0.
+Default: 0.
 
 Warning: Columns of type bytea can hold null characters (\x00), whereas columns of type text cannot.
 
@@ -1249,7 +1375,7 @@ Specifies a port, typically for use with a data_source referring to MySQL.
 
 This key is optional.
 
-The default value is '' (the empty string).
+Default: '' (the empty string).
 
 =item o query => $q
 
@@ -1261,7 +1387,7 @@ Either way, the object will be accessible via the $session -> query() method.
 
 This key is optional.
 
-The default value is '' (the empty string).
+Default: '' (the empty string).
 
 =item o query_class => $class_name
 
@@ -1269,7 +1395,7 @@ Specifies the class of query object to create if a value is not provided for the
 
 This key is optional.
 
-The default value is 'CGI'.
+Default: 'CGI'.
 
 =item o socket => $string
 
@@ -1280,7 +1406,7 @@ option.
 
 This key is optional.
 
-The default value is '' (the empty string).
+Default: '' (the empty string).
 
 =item o table_name => $string
 
@@ -1288,7 +1414,7 @@ Specifies the name of the table holding the session data.
 
 This key is optional.
 
-The default value is 'sessions'.
+Default: 'sessions'.
 
 =item o type => $string
 
@@ -1296,7 +1422,7 @@ Specifies the type of L<Data::Session> object you wish to create.
 
 This key is optional.
 
-The default value is 'driver:File;id:MD5;serialize:DataDumper'.
+Default: 'driver:File;id:MD5;serialize:DataDumper'.
 
 This complex topic is discussed in the section L</Specifying Session Options>.
 
@@ -1314,13 +1440,15 @@ This value is used in these cases:
 
 =back
 
+Default: 0660 (octal).
+
 =item o username => $string
 
 Specifies a value to use as the 2nd parameter in the call to L<DBI>'s connect() method.
 
 This key is optional. It is only used if you do not supply a value for the 'dbh' key.
 
-The default value is '' (the empty string).
+Default: '' (the empty string).
 
 =item o verbose => $integer
 
@@ -1330,7 +1458,7 @@ Typical values are 0, 1 and 2.
 
 This key is optional.
 
-The default, 0, means nothing is printed.
+Default: 0, meaings nothing is printed.
 
 See L</dump([$heading])> for what happens when verbose is 2.
 
@@ -1695,6 +1823,16 @@ and 'password'.
 
 When using SQLite, just specify a value for 'data_source'. The default values for 'username' and 'password' -
 empty strings - will work.
+
+=item o file_name and id_file
+
+When using new(type => 'driver:File;id:AutoIncrement;...'), then file_name is ignored and id_file is used.
+
+If id_file is not supplied, it defaults to File::Spec -> catdir(File::Spec -> tmpdir, 'data.session.id').
+
+When using new(type => 'driver:File;id:<Not AutoIncrement>;...'), then id_file is ignored and file_name is used.
+
+If file_name is not supplied, it defaults to 'cgisess_%s'. Note the mandatory %s.
 
 =item o pg_bytea and pg_text
 
@@ -2218,6 +2356,8 @@ Also, see </Trouble with Exiting>, below, to understand why flush() must be call
 =item o Why don't the test scripts use L<Test::Database>?
 
 I decided to circumvent it by using L<DBIx::Admin::DSNManager> and adopting the wonders of nested testing.
+But, since V 1.11, I've replaced that module with L<Config::Tiny>, to reduce dependencies, and hence to make it easier
+to get L<Data::Session> into Debian.
 
 See t/basic.t, and in particular this line: subtest $driver => sub.
 

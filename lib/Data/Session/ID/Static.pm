@@ -7,7 +7,7 @@ use warnings;
 
 use Hash::FieldHash ':all';
 
-our $VERSION = '1.11';
+our $VERSION = '1.12';
 
 # -----------------------------------------------
 
@@ -94,7 +94,7 @@ Specifies the static (constant) id to 'generate'.
 
 This key is normally passed in as Data::Session -> new(id => $string).
 
-The default value is 0.
+Default: 0.
 
 This key is mandatory, and can't be 0.
 
