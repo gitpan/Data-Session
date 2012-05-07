@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.12';
+our $VERSION = '1.13';
 
 # -----------------------------------------------
 
@@ -912,7 +912,7 @@ Data::Session - Persistent session data management
 
 =head1 Synopsis
 
-A self-contained CGI script (scripts/cgi.demo.cgi):
+1: A self-contained CGI script (scripts/cgi.demo.cgi):
 
 	#!/usr/bin/perl
 
@@ -992,7 +992,7 @@ A self-contained CGI script (scripts/cgi.demo.cgi):
 
 	$session -> flush;
 
-A basic session. See scripts/sqlite.pl:
+2: A basic session. See scripts/sqlite.pl:
 
 	# The EXLOCK is for BSD-based systems.
 	my($directory)   = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
@@ -1004,7 +1004,7 @@ A basic session. See scripts/sqlite.pl:
 		type        => $type,
 	) || die $Data::Session::errstr;
 
-Using BerkeleyDB as a cache manager. See scripts/berkeleydb.pl:
+3: Using BerkeleyDB as a cache manager. See scripts/berkeleydb.pl:
 
 	# The EXLOCK is for BSD-based systems.
 	my($file_name) = File::Temp -> new(EXLOCK => 0, SUFFIX => '.bdb');
@@ -1031,7 +1031,7 @@ Using BerkeleyDB as a cache manager. See scripts/berkeleydb.pl:
 		type  => $type,
 	) || die $Data::Session::errstr;
 
-Using memcached as a cache manager. See scripts/memcached.pl:
+4: Using memcached as a cache manager. See scripts/memcached.pl:
 
 	my($memd) = Cache::Memcached -> new
 	({
@@ -1052,7 +1052,7 @@ Using memcached as a cache manager. See scripts/memcached.pl:
 		type  => $type,
 	) || die $Data::Session::errstr;
 
-Using a file to hold the ids. See scripts/file.autoincrement.pl:
+5: Using a file to hold the ids. See scripts/file.autoincrement.pl:
 
 	# The EXLOCK is for BSD-based systems.
 	my($directory) = File::Temp::newdir('temp.XXXX', CLEANUP => 1, EXLOCK => 0, TMPDIR => 1);
@@ -1067,7 +1067,7 @@ Using a file to hold the ids. See scripts/file.autoincrement.pl:
 		type        => $type,
 	) || die $Data::Session::errstr;
 
-Using a file to hold the ids. See scripts/file.sha1.pl (non-CGI context):
+6: Using a file to hold the ids. See scripts/file.sha1.pl (non-CGI context):
 
 	my($directory) = '/tmp';
 	my($file_name) = 'session.%s.dat';
@@ -1093,7 +1093,7 @@ Using a file to hold the ids. See scripts/file.sha1.pl (non-CGI context):
 		type      => $type,
 	) || die $Data::Session::errstr;
 
-As a variation on the above, see scripts/cgi.sha1.pl (CGI context but command line program):
+7: As a variation on the above, see scripts/cgi.sha1.pl (CGI context but command line program):
 
 	# As above (scripts/file.sha1.pl), for creating the session. Then...
 
@@ -1121,7 +1121,7 @@ and L<CGI::Session>.
 
 L<Data::Session> stores user data internally in a hashref, and the module reserves key names starting with '_'.
 
-The current list of reserved keys is documented undef L</flush()>.
+The current list of reserved keys is documented under L</flush()>.
 
 Of course, the module also has a whole set of methods to help manage state.
 
@@ -2339,6 +2339,95 @@ Simple instructions for installing L<Cache::Memcached> and memcached are in L<Da
 
 =head1 FAQ
 
+=head2 Guidelines re Sources of Confusion
+
+This section discusses various issues which confront beginners:
+
+=over 4
+
+=item o 1: Both Data::Session and L<CGI::Snapp> have a I<param()> method
+
+Let's say your L<CGI> script sub-classes L<CGI::Application> or it's successor L<CGI::Snapp>.
+
+Then inside your sub-class's methods, this works:
+
+	$self -> param(a_key => 'a_value');
+
+	Time passes...
+
+	my($value) = $self -> param('a_key');
+
+because those 2 modules each implement a method called I<param()>. Basically, you're storing a value (via
+'param') inside $self.
+
+But when you store an object of type Data::Session using I<param()>, it looks like this:
+
+	$self -> param(session => Data::Session -> new(...) );
+
+Now, Data::Session itself I<also> implements a method called I<param()>. So, to store something in the
+session (but not in $self), you must do:
+
+	$self -> param('session') -> param(a_key => 'a_value');
+
+	Time passes...
+
+	my($value) = $self -> param('session') -> param('a_key');
+
+It should be obvious that confusion can arise here because the 2 objects represented by $self and
+$self -> param('session') both have I<param()> methods.
+
+=item o 2: How exactly should a L<CGI> script save a session?
+
+The first example in the Synopsis shows a very simple L<CGI> script doing the right thing by calling
+I<flush()> just before it exits.
+
+Alternately, if you sub-class L<CGI::Snapp>, the call to I<flush()> is best placed in your I<teardown()>
+method, which is where you override L<CGI::Snapp/teardown()>. The point here is that your I<teardown()>
+is called automatically at the end of each run mode.
+
+This important matter is also discussed in L</General Questions> below.
+
+=item o 3: Storing array and hashes
+
+Put simply: Don't do that!
+
+This will fail:
+
+	$self -> param('session') -> param(my_hash => %my_hash);
+
+	Time passes...
+
+	my(%my_hash) = $self -> param('session') -> param('my_hash');
+
+Likewise for an array instead of a hash.
+
+But why? Because the part 'param(my_hash => %my_hash)' is basically assigning a list (%my_hash) to a
+scalar (my_hash). Hence, only 1 element of the list (the 'first' key in some unknown order) will be
+assigned.
+
+So, when you try to restore the hash with 'my(%my_hash) ...', all you'll get back is a scalar, which will
+generate the classic error message 'Odd number of elements in hash assignment...'.
+
+The solution is to use arrayrefs and hashrefs:
+
+	$self -> param('session') -> param(my_hash => {%my_hash});
+
+	Time passes...
+
+	my(%my_hash) = %{$self -> param('session') -> param('my_hash')};
+
+Likewise for an array:
+
+	$self -> param('session') -> param(my_ara => [@my_ara]);
+
+	Time passes...
+
+	my(@my_ara) = @{$self -> param('session') -> param('my_ara')};
+
+=back
+
+=head2 General Questions
+
 =over 4
 
 =item o My sessions are not getting written to disk!
@@ -2351,7 +2440,7 @@ not enough to trigger saving.
 Just do something like $session -> param(ok => 1); if you want a session saved just to indicate it exists. Code like this
 sets the modified flag on the session, so that flush() actually does the save.
 
-Also, see </Trouble with Exiting>, below, to understand why flush() must be called explicitly in persistent environments.
+Also, see L</Trouble with Exiting>, below, to understand why flush() must be called explicitly in persistent environments.
 
 =item o Why don't the test scripts use L<Test::Database>?
 
