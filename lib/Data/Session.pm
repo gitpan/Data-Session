@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.13';
+our $VERSION = '1.14';
 
 # -----------------------------------------------
 
@@ -744,8 +744,6 @@ sub parse_options
 	$self -> id_option($options{id});
 	$self -> serializer_option($options{serialize});
 	$self -> type(join(';', map{"$_:$options{$_}"} sort keys %default));
-
-	($self -> verbose) && $self -> log('type: ' . $self -> type);
 
 	if ($self -> verbose > 1)
 	{

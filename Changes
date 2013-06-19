@@ -1,7 +1,14 @@
 Revision history for Perl extension Data::Session.
 
+1.14  Wed Jun 19 17:07:00 2013
+	- No code changes.
+	- Rename CHANGES to Changes as per CPAN::Changes::SPEC.
+	- Update pre-reqs.
+
 1.13  Thu May  3 11:23:00 2012
-	- No code changes. Just additions to the docs, as follows...
+	- In parse_options(), the result of parsing the 'type' (driver:Pg;id:MD5;serialize:DataDumper)
+		was printed both for verbose == 1 and verbose > 1. Now it's only printed if verbose > 1.
+	- Apart from the above, no other code changes. Just additions to the docs, as follows...
 	- Add important section to the docs, under FAQ: Guidelines re Sources of Confusion.
 		(a) Firstly, explain (with examples) the difference (for CGI::Snapp-derived scripts) between:
 		$self -> param(a_key => 'a_value');

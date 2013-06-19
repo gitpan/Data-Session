@@ -1,7 +1,6 @@
-.gitignore
 Build.PL
 Changelog.ini
-CHANGES
+Changes
 lib/Data/Session.pm
 lib/Data/Session/Base.pm
 lib/Data/Session/CGISession.pm
