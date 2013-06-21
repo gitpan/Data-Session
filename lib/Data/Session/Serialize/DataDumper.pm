@@ -15,7 +15,7 @@ use vars qw( %overloaded );
 
 require overload;
 
-our $VERSION = '1.14';
+our $VERSION = '1.15';
 
 # -----------------------------------------------
 

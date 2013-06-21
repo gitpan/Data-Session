@@ -1,6 +1,6 @@
 package Data::Session::CGISession;
 
-our $VERSION = '1.14';
+our $VERSION = '1.15';
 
 # -----------------------------------------------
 

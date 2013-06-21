@@ -48,7 +48,7 @@ fieldhash my %username          => 'username';
 fieldhash my %verbose           => 'verbose';
 
 our $errstr  = '';
-our $VERSION = '1.14';
+our $VERSION = '1.15';
 
 # -----------------------------------------------
 

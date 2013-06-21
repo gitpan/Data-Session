@@ -1,5 +1,13 @@
 Revision history for Perl extension Data::Session.
 
+1.15  Fri Jun 21 11:43:00 2013
+	- Update pre-reqs thus: Pragmas shipped with Perl are now version 0 only. This means they are expected
+		to be present, but a specific version # is not important. As per advice by Father C. (for a different
+		module). Pragmas affected: autovivification, overload, parent, strict, vars and warnings.
+	- Update various other module version pre-reqs, including CGI to V 3.63. The test for equality in t/basic.t
+		for CGI cookies and HTTP header failed on CGI V 3.53, and work has been done in CGI V 3.63 in that
+		area. Hopefully this pre-req change fixes that problem (which was detected on 1 CPAN Tester machine).
+
 1.14  Wed Jun 19 17:07:00 2013
 	- No code changes.
 	- Rename CHANGES to Changes as per CPAN::Changes::SPEC.
