@@ -14,7 +14,7 @@ use Hash::FieldHash ':all';
 
 use Try::Tiny;
 
-our $VERSION = '1.15';
+our $VERSION = '1.16';
 
 # -----------------------------------------------
 

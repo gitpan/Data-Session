@@ -19,7 +19,7 @@ fieldhash my %my_id_generators => 'my_id_generators';
 fieldhash my %my_serializers   => 'my_serializers';
 
 our $errstr  = '';
-our $VERSION = '1.15';
+our $VERSION = '1.16';
 
 # -----------------------------------------------
 
@@ -516,14 +516,20 @@ sub load_session
 			($self -> verbose > 1) && $self -> dump('Loaded and checked expiry');
 
 			# Check for session parameter expiry.
+			# Stockpile keys to be cleared. We can't call $self -> clear($key) inside the loop,
+			# because it updates $$data{_SESSION_PTIME}, which in turns confuses 'each'.
+
+			my(@stack);
 
 			while (my($key, $time) = each %{$$data{_SESSION_PTIME} })
 			{
 				if ($time && ( ($self -> atime + $time) < time) )
 				{
-					$self -> clear($key);
+					push @stack, $key;
 				}
 			}
+
+			$self -> clear($_) for @stack;
 
 			# We can't do this above, just after my($data)..., since it's used just above, as $self -> atime().
 

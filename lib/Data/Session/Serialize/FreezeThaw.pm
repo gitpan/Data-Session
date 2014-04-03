@@ -7,7 +7,7 @@ use warnings;
 
 use FreezeThaw;
 
-our $VERSION = '1.15';
+our $VERSION = '1.16';
 
 # -----------------------------------------------
 
